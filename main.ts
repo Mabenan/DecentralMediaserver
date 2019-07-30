@@ -1,11 +1,11 @@
-import { app, ipcMain, ipcRenderer, BrowserWindow, screen } from "electron";
+import { app, ipcMain, ipcRenderer, BrowserWindow, screen, remote } from "electron";
 import * as path from "path";
 import * as url from "url";
 import { execFile } from "child_process";
 
 class ElectronWindow {
   public window: any;
-  title = "Electron Angular";
+  title = "Decentral Mediaserver";
 
   constructor(private model: IWindowModel) {
     if (this.checkSecondDisplay(model.display)) {
@@ -31,12 +31,12 @@ class ElectronWindow {
   private createBrowserWindow(x: number = 0, y: number = 0): BrowserWindow {
     return new BrowserWindow({
       title: this.title,
-      fullscreen: true,
-      minimizable: false,
-      maximizable: false,
+      fullscreen: false,
+      minimizable: true,
+      maximizable: true,
       autoHideMenuBar: true,
       alwaysOnTop: !this.model.isDev,
-      closable: false,
+      closable: true,
       show: true,
       x: x,
       y: y,
@@ -59,7 +59,6 @@ class ElectronMain {
   appTitle = "Decentral Mediaserver";
   args: any;
   mainWindow: BrowserWindow;
-  secondWindow: BrowserWindow;
   development = false;
   console = false;
 
@@ -108,7 +107,6 @@ class ElectronMain {
   createWindows() {
     const displays = <any>screen.getAllDisplays();
     if (displays[1] !== undefined) {
-      this.secondMonitor(displays[0]);
       this.mainMonitor(displays[1]);
     } else {
       this.mainMonitor(displays[0]);
@@ -117,10 +115,6 @@ class ElectronMain {
 
   mainMonitor(display: any) {
     this.mainWindow = new ElectronWindow(this.getDisplayModel(display)).window;
-  }
-
-  secondMonitor(display: any) {
-    this.secondWindow = new ElectronWindow(this.getDisplayModel(display, "/second-window")).window;
   }
 
   getDisplayModel(display: number, URL: string = "/"): IWindowModel {
@@ -135,9 +129,10 @@ class ElectronMain {
 
   onWindowClosed(window: BrowserWindow) {
     this.mainWindow = null;
-    this.secondWindow = null;
+    console.log("quit electron");
     app.quit();
-    app.exit();
+    console.log("quited electron");
+    // app.exit();
   }
 
   createDefaultWindows() {
@@ -145,9 +140,6 @@ class ElectronMain {
     if (this.mainWindow === null) {
       if (displays[1] !== undefined) {
         this.mainMonitor(displays[1]);
-        if (this.secondWindow === null) {
-          this.secondMonitor(displays[0]);
-        }
       } else {
         this.mainMonitor(displays[0]);
       }
@@ -156,7 +148,9 @@ class ElectronMain {
 
   quitAppOnNonDarwin() {
     if (process.platform !== "darwin") {
+      console.log("quit electron non darwin");
       app.quit();
+      console.log("quited electron non darwin");
     }
   }
 
@@ -189,5 +183,4 @@ interface IWindowModel {
   onClosed: Function;
   console: boolean;
 }
-
 export default new ElectronMain();
