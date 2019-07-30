@@ -56,7 +56,7 @@ class ElectronWindow {
 }
 
 class ElectronMain {
-  appTitle = "Electron Angular Quickstart";
+  appTitle = "Decentral Mediaserver";
   args: any;
   mainWindow: BrowserWindow;
   secondWindow: BrowserWindow;
