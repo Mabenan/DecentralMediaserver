@@ -6,12 +6,13 @@ import * as ftp from 'ftp';
     providedIn: "root"
 })
 export class FTPService {
-    fs: typeof fs;
     ftp: typeof ftp;
+    options: ftp.Options;
 
     constructor(private electron: ElectronService) {
-        this.fs = this.electron.remote.require("fs");
         this.ftp = this.electron.remote.require("ftp");
+        const lfs: typeof fs = this.electron.remote.require("fs");
+        this.options = JSON.parse(lfs.readFileSync("ftp.config.json", { encoding: "UTF-8" }));
     }
 
     getListOfFiles(path: string): Promise<any[]> {
@@ -35,8 +36,7 @@ export class FTPService {
             client.on("ready", () => {
                 res(client);
             });
-            const options: ftp.Options = JSON.parse(this.fs.readFileSync("ftp.config.json", { encoding: "UTF-8" }));
-            client.connect(options);
+            client.connect(this.options);
         });
     }
 }

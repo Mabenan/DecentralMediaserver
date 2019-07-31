@@ -1,10 +1,10 @@
 {
   "name": "decentral-mediaserver",
   "version": "1.2.2",
-  "main": "main.js",
+  "main": "dist/main.js",
   "scripts": {
     "ng": "ng",
-    "start": "npm run electron:start",
+    "start": "startmysql.bat && npm run electron:start",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
@@ -14,10 +14,12 @@
     "ng:clean": "rimraf dist && rimraf main.js",
     "electron:serve": "wait-on ./dist/electron-angular/index.html && npm run electron:watch",
     "ng:build": "ng build --watch=true --poll 1000 ",
-    "electron:tsc": "tsc -w main.ts --lib es2015,es2016,es2017,esnext,dom",
-    "electron:run": "wait-on main.js && electron . --serve --console --development --remote-debugging-port=9222",
+    "electron:tsc": "tsc -p tsconfig.entity.json && tsc -p tsconfig.migration.json && tsc -w -p tsconfig.backend.json",
+    "electron:run": "wait-on dist/main.js && electron . --serve --console --development --remote-debugging-port=9222",
     "electron:exit": "taskkill /IM electron.exe /F",
-    "electron:watch": "concurrently --kill-others \"npm run electron:tsc \"  \"npm run electron:run\""
+    "electron:watch": "concurrently --kill-others \"npm run electron:tsc \"  \"npm run electron:run\"",
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "electron:exe": "electron . --serve --console --development --remote-debugging-port=9222"
   },
   "browser": {
     "fs": false,
@@ -33,7 +35,7 @@
     "appId": "com.electron.decentral-mediaserver",
     "copyright": "Mabenan",
     "files": [
-      "./main.js",
+      "dist/main.js",
       "dist"
     ],
     "directories": {
@@ -79,6 +81,7 @@
     "@types/bootstrap": "^4.2.1",
     "@types/ftp": "^0.3.29",
     "@types/jquery": "^3.3.30",
+    "@types/mysql": "^2.15.6",
     "async": "^3.1.0",
     "bootstrap": "^4.2.1",
     "buffer": "^5.2.1",
@@ -88,11 +91,13 @@
     "express": "^4.17.1",
     "ftp": "^0.3.10",
     "jquery": "^3.4.1",
+    "mysql": "^2.17.1",
     "popper.js": "^1.15.0",
     "rxjs": "^6.0.0",
     "stream": "0.0.2",
     "timers": "^0.1.1",
     "tslib": "^1.9.0",
+    "typeorm": "^0.2.18",
     "yargs": "^12.0.5",
     "zone.js": "^0.8.29"
   },
@@ -128,6 +133,7 @@
     "protractor": "^5.4.2",
     "ts-loader": "^6.0.4",
     "ts-node": "~5.0.1",
+    "tsconfig-paths": "^3.8.0",
     "tslint": "~5.9.1",
     "typescript": "^3.2.4",
     "wait-on": "^2.1.0",

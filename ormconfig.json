@@ -1,0 +1,15 @@
+{
+    "type": "mysql",
+    "host": "localhost",
+    "port": 3306,
+    "username": "root",
+    "password": "pass",
+    "database": "mediaserver",
+    "entities": ["dist/types/entity/*.js"],
+    "migrationsTableName": "custom_migration_table",
+    "migrations": ["dist/types/migration/*.js"],
+    "cli": {
+        "migrationsDir": "src/types/migration",
+        "entitiesDir": "src/types/entity"
+    }
+}

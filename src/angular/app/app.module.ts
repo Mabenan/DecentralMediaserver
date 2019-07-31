@@ -13,12 +13,13 @@ import { HomeComponent } from "./components/home/home.component";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FTPService } from "./services/ftp.service";
 import { MatTableModule } from "@angular/material/table"; 
+import { TypeORMService } from './services/TypeOrm.service';
 
 @NgModule({
   declarations: [AppComponent, HomeComponent],
   imports: [AppRoutingModule, HttpClientModule, MatTableModule,
     ServerModule, BrowserModule.withServerTransition({appId: "decentral-mediaserver"}), BrowserAnimationsModule],
-  providers: [ElectronService, FTPService],
+  providers: [ElectronService, FTPService, TypeORMService],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

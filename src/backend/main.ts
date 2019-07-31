@@ -10,7 +10,7 @@ class ElectronWindow {
   constructor(private model: IWindowModel) {
     if (this.checkSecondDisplay(model.display)) {
       this.window = this.createBrowserWindow(model.display.bounds.x, model.display.bounds.y);
-      this.loadFromFile(model.URL, "/dist/electron-angular/index.html");
+      this.loadFromFile(model.URL, "/electron-angular/index.html");
     }
 
     if (model.isDev) {
