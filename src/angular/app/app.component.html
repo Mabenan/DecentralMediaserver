@@ -1,30 +1,12 @@
-<div class="wrapper">
-    <!-- Sidebar -->
-    <nav id="sidebar" [class.active]="isActive">
-        <!-- <div  class="sidebar-header"> -->
-            <button class="btn btn-primary" data-toggle="button" style="
-            float: right;"
-                (click)="ToogleSidebar()">
-                C
-            </button>
-        <!-- </div> -->
-        <ul *ngIf="!isActive" class="list-unstyled components">
-            <li class="active">
-                <a href="#" [routerLink]="['']" >Home</a>
-            </li>
-            <li>
-                <a href="#customizing" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Customizing</a>
-                <ul class="collapse list-unstyled" id="customizing">
-                    <li>
-                        <a href="#" [routerLink]="['/customizing/file-system']">FileSystem</a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-    </nav>
-
-
-    <div id="content">
-        <router-outlet></router-outlet>
-    </div>
-</div>
+<app-top-nav class="fixed-topnav" fxHide.gt-xs></app-top-nav>
+<mat-sidenav-container>
+  <mat-sidenav #appDrawer mode="over" opened="false">
+    <mat-nav-list>
+      <app-menu-list-item *ngFor="let item of navItems" [item]="item"></app-menu-list-item>
+    </mat-nav-list>
+  </mat-sidenav>
+  <app-top-nav class="fixed-topnav" fxHide.xs></app-top-nav>
+  <router-outlet></router-outlet>
+  <div fxFlex></div>
+  <span class="version-info">Current build: {{version.full ? version.full : version}}</span>
+</mat-sidenav-container>
