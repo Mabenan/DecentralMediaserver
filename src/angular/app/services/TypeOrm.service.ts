@@ -26,9 +26,25 @@ export class TypeORMService {
             ltypeORM.getConnectionManager().create(this.options);
         }
         this.connection = ltypeORM.getConnection("default");
-        this.connection.connect().then((connection) => connection.synchronize()).catch(() => {
-            this.connection.synchronize();
+    }
+
+    public getConnection(): Promise<typeORM.Connection> {
+        return new Promise<typeORM.Connection>((res, rej) => {
+            this.connection.connect().then((connection) => {
+                this.migrate().then(() => res(this.connection));
+            }).catch(() => {
+                this.migrate().then(() => res(this.connection));
+            });
+
         });
     }
 
+
+    private migrate(): Promise<any> {
+        return new Promise<any>((res, rej) => {
+            this.connection.runMigrations().then(() => {
+                res();
+            });
+        });
+    }
 }

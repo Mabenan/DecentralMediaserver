@@ -1,12 +1,17 @@
 import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
 
-import { HomeComponent } from "../components/home/home.component";
+import { HomeComponent } from "../home/home.component";
+import { FileSystemComponent } from "../file-system/file-system.component";
 
 const routes: Routes = [
   {
     path: "",
     component: HomeComponent
+  },
+  {
+    path: "customizing/file-system",
+    component: FileSystemComponent
   }
 ];
 

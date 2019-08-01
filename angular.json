@@ -4,8 +4,8 @@
   "newProjectRoot": "projects",
   "projects": {
     "electron-angular": {
-      "root": "",
-      "sourceRoot": "src",
+      "root": "src/angular",
+      "sourceRoot": "src/angular",
       "projectType": "application",
       "prefix": "app",
       "schematics": {

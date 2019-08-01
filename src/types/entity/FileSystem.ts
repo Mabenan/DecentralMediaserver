@@ -12,4 +12,7 @@ export class FileSystem {
     @Column()
     path: string;
 
+    @Column()
+    description: string;
+
 }

@@ -19,7 +19,8 @@
     "electron:exit": "taskkill /IM electron.exe /F",
     "electron:watch": "concurrently --kill-others \"npm run electron:tsc \"  \"npm run electron:run\"",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
-    "electron:exe": "electron . --serve --console --development --remote-debugging-port=9222"
+    "electron:exe": "electron . --serve --console --development --remote-debugging-port=9222",
+    "migrate": "tsc -p tsconfig.entity.json && tsc -p tsconfig.migration.json && typeorm migration:run && typeorm migration:generate"
   },
   "browser": {
     "fs": false,
