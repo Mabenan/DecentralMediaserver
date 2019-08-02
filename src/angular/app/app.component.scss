@@ -26,7 +26,6 @@
 .mat-nav-list {
   padding-top: 0;
 }
-@include breakpoint-max(600px) {
   .fixed-topnav {
     position: fixed;
     top: 0;
@@ -39,7 +38,6 @@
   .mat-drawer {
     padding-top: 56px;
   }
-}
 .menu-list-item.mat-list-item {
   .mat-list-item-content {
     flex: 1 1 100%;

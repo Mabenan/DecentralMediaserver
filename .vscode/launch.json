@@ -1,28 +1,46 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "chrome",
-            "request": "attach",
-            "name": "Launch Chrome against localhost",
-            "port": 9222,
-            "webRoot": "${workspaceFolder}/dist/electron-angular",
-            "sourceMaps": true,
-            "sourceMapPathOverrides": {
-                "webpack:///./src/*": "${workspaceFolder}/src/*",                // Example: "meteor://💻app/main.ts" -> "/Users/me/project/main.ts"
-            }
-        },
-        {
-          "name": "Debug Main Process",
-          "type": "node",
-          "request": "launch",
-          "cwd": "${workspaceRoot}",
-          "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
-          "windows": {
-            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
-          },
-          "args" : ["."],
-          "outputCapture": "std"
-        }
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Launch Chromium",
+      "url": "http://localhost:4200/#",
+      "webRoot": "${workspaceFolder}/dist/electron-angular",
+      "runtimeExecutable": "/usr/bin/chromium",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack:///./*": "${workspaceFolder}/src/angular/*" // Example: "meteor://💻app/main.ts" -> "/Users/me/project/main.ts"
+      },
+      "runtimeArgs": [
+        "--new-window",
+        "-user-data-dir=\"/${workspaceFolder}/DevProfile\"",
+        "--remote-debugging-port=9222",
+        "--disable-background-networking"
+      ]
+    },
+    {
+      "type": "chrome",
+      "request": "attach",
+      "name": "Launch Chrome against localhost",
+      "port": 9222,
+      "webRoot": "${workspaceFolder}/dist/electron-angular",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack:///./src/*": "${workspaceFolder}/src/*" // Example: "meteor://💻app/main.ts" -> "/Users/me/project/main.ts"
+      }
+    },
+    {
+      "name": "Debug Main Process",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+      "windows": {
+        "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
+      },
+      "args": ["."],
+      "outputCapture": "std"
+    }
+  ]
 }
