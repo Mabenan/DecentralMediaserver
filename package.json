@@ -4,7 +4,9 @@
   "main": "dist/main.js",
   "scripts": {
     "ng": "ng",
-    "start": "startmysql.bat && npm run electron:start",
+    "start": "run-script-os",
+    "start:win32": "startmysql.bat && npm run electron:start",
+    "start:default": "npm run electron:start",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
