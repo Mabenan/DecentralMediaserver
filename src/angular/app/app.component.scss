@@ -33,6 +33,14 @@
     z-index: 2;
     width: 100% !important;
   }
+  .fixed-bottomnav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    width: 100% !important;
+  }
+
 
   .mat-drawer-container,
   .mat-drawer {

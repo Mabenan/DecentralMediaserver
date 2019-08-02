@@ -23,13 +23,13 @@ export class AppComponent implements AfterViewInit {
     {
       displayName: "Home",
       iconName: "recent_actors",
-      route: "devfestfl",
+      route: "",
       children: []
     },
     {
       displayName: "Customizing",
       iconName: "recent_actors",
-      route: "devfestfl",
+      route: "",
       children: [
         {
           displayName: "FileSystem",
@@ -39,7 +39,7 @@ export class AppComponent implements AfterViewInit {
       ]
     }
   ];
-  constructor(private navService: NavService) {}
+  constructor(public navService: NavService) {}
 
   ngAfterViewInit() {
     this.navService.appDrawer = this.appDrawer;

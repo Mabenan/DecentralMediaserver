@@ -8,4 +8,9 @@
   <router-outlet></router-outlet>
   <div fxFlex></div>
   <span class="version-info">Current build: {{version.full ? version.full : version}}</span>
+  <mat-toolbar class="fixed-bottomnav">
+    <button mat-icon-button *ngFor="let element of navService.toolbarButtons" id="menu" (click)="element.handler.onClick()">
+      {{element.name}}
+    </button>
+  </mat-toolbar>
 </mat-sidenav-container>
