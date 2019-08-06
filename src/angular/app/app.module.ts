@@ -42,7 +42,9 @@ import {
   MatTabsModule,
   MatToolbarModule,
   MatTooltipModule,
-  MatTableModule
+  MatTableModule,
+  MatStepperModule,
+  MatFormFieldModule
 } from "@angular/material";
 import {AppComponent} from "./app.component";
 import {FlexLayoutModule} from "@angular/flex-layout";
@@ -52,6 +54,7 @@ import { NavService } from "./services/nav.service";
 import { TopNavComponent } from "./top-nav/top-nav.component";
 import { FileSystemComponent } from "./file-system/file-system.component";
 import { HomeComponent } from "./home/home.component";
+import { FileSystemCreationComponent } from "./file-system-creation/file-system-creation.component";
 
 /**
  * NgModule that includes all Material modules that are required.
@@ -71,6 +74,8 @@ import { HomeComponent } from "./home/home.component";
 
     // Material
     MatAutocompleteModule,
+    MatStepperModule,
+    MatFormFieldModule,
     MatButtonModule,
     MatButtonToggleModule,
     MatCardModule,
@@ -98,7 +103,8 @@ import { HomeComponent } from "./home/home.component";
     MatToolbarModule,
     MatTooltipModule,
     MatNativeDateModule,
-  ]
+  ],
+  declarations: []
 })
 export class MaterialModule {}
 
@@ -118,7 +124,8 @@ export class MaterialModule {}
     MenuListItemComponent,
     HomeComponent,
     FileSystemComponent,
-    TopNavComponent
+    TopNavComponent,
+    FileSystemCreationComponent
   ],
   bootstrap: [AppComponent],
   providers: [NavService]

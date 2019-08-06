@@ -1,0 +1,70 @@
+<mat-horizontal-stepper [linear]="true" #stepper>
+  <mat-step [stepControl]="basicSystemData">
+    <ng-template matStepLabel>Fill in the File System Basic Data</ng-template>
+    <form [formGroup]="basicSystemData">
+      <mat-form-field>
+        <input
+          matInput
+          placeholder="File System Name"
+          formControlName="fileSystemName"
+          required
+        />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-select
+          matInput
+          placeholder="File System Type"
+          formControlName="fileSystemType"
+          required
+        >
+        <mat-option  value="ftp">FTP</mat-option >
+
+        </mat-select >
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step [stepControl]="ftpSettings" >
+    <ng-template matStepLabel>Fill in FTP Settings</ng-template>
+    <form [formGroup]="ftpSettings">
+      <mat-form-field>
+        <input
+          matInput
+          placeholder="Host"
+          formControlName="host"
+          required
+        />
+      </mat-form-field>
+      <mat-form-field>
+        <input
+          matInput
+          placeholder="User"
+          formControlName="user"
+          required
+        />
+      </mat-form-field>
+      <mat-form-field>
+        <input
+          matInput
+          placeholder="Password"
+          formControlName="pass"
+          required
+        />
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Done</ng-template>
+    You are now done.
+    <div>
+      <button mat-button matStepperPrevious>Back</button>
+      <button mat-button (click)="finish()">Finish</button>
+    </div>
+  </mat-step>
+</mat-horizontal-stepper>

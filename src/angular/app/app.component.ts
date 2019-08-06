@@ -35,6 +35,11 @@ export class AppComponent implements AfterViewInit {
           displayName: "FileSystem",
           iconName: "recent_actors",
           route: "customizing/file-system"
+        },
+        {
+          displayName: "FileSystem",
+          iconName: "recent_actors",
+          route: "customizing/file-system-creation"
         }
       ]
     }
