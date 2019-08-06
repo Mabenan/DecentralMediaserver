@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
-import { ElectronService } from './electron.service';
-import * as fs from 'fs';
-import * as ftp from 'ftp';
+import { ElectronService } from "./electron.service";
+import * as fs from "fs";
+import * as ftp from "ftp";
 @Injectable({
     providedIn: "root"
 })
@@ -12,7 +12,7 @@ export class FTPService {
     constructor(private electron: ElectronService) {
         this.ftp = this.electron.remote.require("ftp");
         const lfs: typeof fs = this.electron.remote.require("fs");
-        this.options = JSON.parse(lfs.readFileSync("ftp.config.json", { encoding: "UTF-8" }));
+        // this.options = JSON.parse(lfs.readFileSync("ftp.config.json", { encoding: "UTF-8" }));
     }
 
     getListOfFiles(path: string): Promise<any[]> {
