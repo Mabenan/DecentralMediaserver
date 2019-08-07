@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { ipcRenderer, webFrame, remote } from "electron";
 import * as childProcess from "child_process";
 import * as fs from "fs";
+import * as path from "path";
 @Injectable({
   providedIn: "root"
 })
@@ -12,6 +13,7 @@ export class ElectronService {
   childProcess: typeof childProcess;
   fs: typeof fs;
   isElectron: any;
+  path: typeof path;
 
   constructor() {
     this.checkElectron();
@@ -22,6 +24,7 @@ export class ElectronService {
       this.remote = (<any>window).require("electron").remote;
       this.childProcess = (<any>window).require("electron").childProcess;
       this.fs = (<any>window).require("electron").fs;
+      this.path = this.remote.require("path");
     }
   }
 

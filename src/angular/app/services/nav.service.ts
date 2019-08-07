@@ -29,11 +29,15 @@ export class NavService {
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationEnd) {
         this.currentUrl.next(event.urlAfterRedirects);
-        const names: string[] = this.collectNames(this.router.routerState.root.root);
+        const names: string[] = this.collectNames(
+          this.router.routerState.root.root
+        );
         this.toolbarButtons = [];
         names.forEach(name => {
           if (this.registeredToolbarButtons.has(name)) {
-          this.toolbarButtons = this.toolbarButtons.concat(this.registeredToolbarButtons.get(name));
+            this.toolbarButtons = this.toolbarButtons.concat(
+              this.registeredToolbarButtons.get(name)
+            );
           }
         });
       }
@@ -43,7 +47,10 @@ export class NavService {
     this.registeredToolbarButtons.set(key, values);
   }
   collectNames(root: ActivatedRoute): string[] {
-    let names = [(root.component as any).name];
+    let names = [];
+    if (root.component !== undefined) {
+      names = [(root.component as any).name];
+    }
     root.children.forEach(child => {
       names = names.concat(this.collectNames(child));
     });

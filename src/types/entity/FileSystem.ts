@@ -1,24 +1,31 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { File } from "./File";
+import { PathMap } from "./PathMap";
 
 @Entity()
 export class FileSystem {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: true })
   title: string;
 
-  @Column()
-  path: string;
-
-  @Column()
-  description: string;
-  @Column()
+  @Column({ nullable: true })
   type: string;
-  @Column()
-  host: string;
-  @Column()
-  user: string;
-  @Column()
-  pass: string;
+
+  @Column({ nullable: true })
+  ftpHost: string;
+  @Column({ nullable: true })
+  ftpUser: string;
+  @Column({ nullable: true })
+  ftpPass: string;
+
+  @Column({ nullable: true })
+  webHost: string;
+
+  @OneToMany(type => File, file => file.fileSystem)
+  files: File[];
+
+  @OneToMany(type => PathMap, pathMap => pathMap.fileSystem)
+  public pathMaps: PathMap[];
 }

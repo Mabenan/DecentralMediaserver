@@ -1,0 +1,24 @@
+<div class="container">
+  <form [formGroup]="path" (ngSubmit)="save()">
+  <mat-form-field>
+    <input
+      matInput
+      placeholder="FTP Path"
+      formControlName="ftp"
+      required
+    />
+  </mat-form-field>
+  <mat-form-field>
+    <input
+      matInput
+      placeholder="Web Path"
+      formControlName="web"
+      required
+    />
+  </mat-form-field>
+  <div>
+    <button mat-button  type="submit">Save</button>
+    <button mat-button (click)="abort()">Abort</button>
+  </div>
+</form>
+</div>

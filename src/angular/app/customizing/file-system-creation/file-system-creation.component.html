@@ -1,3 +1,4 @@
+<div class="container">
 <mat-horizontal-stepper [linear]="true" #stepper>
   <mat-step [stepControl]="basicSystemData">
     <ng-template matStepLabel>Fill in the File System Basic Data</ng-template>
@@ -53,6 +54,14 @@
           required
         />
       </mat-form-field>
+      <mat-form-field>
+        <input
+          matInput
+          placeholder="Web Host"
+          formControlName="webHost"
+          required
+        />
+      </mat-form-field>
       <div>
         <button mat-button matStepperPrevious>Back</button>
         <button mat-button matStepperNext>Next</button>
@@ -68,3 +77,4 @@
     </div>
   </mat-step>
 </mat-horizontal-stepper>
+</div>

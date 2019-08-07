@@ -2,8 +2,6 @@ import { NgModule } from "@angular/core";
 import { Routes, RouterModule } from "@angular/router";
 
 import { HomeComponent } from "../home/home.component";
-import { FileSystemComponent } from "../file-system/file-system.component";
-import { FileSystemCreationComponent } from "../file-system-creation/file-system-creation.component";
 
 const routes: Routes = [
   {
@@ -11,12 +9,8 @@ const routes: Routes = [
     component: HomeComponent
   },
   {
-    path: "customizing/file-system",
-    component: FileSystemComponent
-  },
-  {
-    path: "customizing/file-system-creation",
-    component: FileSystemCreationComponent
+    path: 'customizing',
+    loadChildren: () => import('../customizing/customizing.module').then(mod => mod.CustomizingModule),
   }
 ];
 

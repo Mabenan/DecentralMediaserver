@@ -1,0 +1,14 @@
+<div class="container">
+  <mat-table [dataSource]="paths" class="mat-elevation-z8">
+    <ng-container matColumnDef="ftpPath">
+      <mat-header-cell *matHeaderCellDef>FTP Path</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{ element.ftpPath }}</mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="webPath">
+      <mat-header-cell *matHeaderCellDef>Web Path</mat-header-cell>
+      <mat-cell *matCellDef="let element">{{ element.webPath }}</mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+  </mat-table>
+  </div>
