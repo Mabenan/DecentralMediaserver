@@ -3,6 +3,7 @@ import { Event, NavigationEnd, Router, ActivatedRoute } from "@angular/router";
 import { BehaviorSubject } from "rxjs";
 import { element } from "@angular/core/src/render3";
 import { Tree } from "@angular/router/src/utils/tree";
+import { NavItem } from "../nav-item";
 
 export interface ToolbarHandler {
   onClick();
@@ -24,6 +25,32 @@ export class NavService {
   >();
   public toolbarButtons: ToolbarButton[];
   open: boolean;
+  public navItems: NavItem[] = [
+    {
+      displayName: "Home",
+      iconName: "recent_actors",
+      route: "",
+      children: []
+    },
+    {
+      displayName: "Customizing",
+      iconName: "recent_actors",
+      route: "",
+      children: [
+        {
+          displayName: "FileSystem",
+          iconName: "recent_actors",
+          route: "customizing/"
+        },
+      ]
+    },
+    {
+      displayName: "Gallery",
+      iconName: "recent_actors",
+      route: "gallery",
+      children: []
+    },
+  ];
 
   constructor(private router: Router) {
     this.router.events.subscribe((event: Event) => {

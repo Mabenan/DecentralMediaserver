@@ -13,7 +13,9 @@ import { NavService } from "./services/nav.service";
 import { TopNavComponent } from "./top-nav/top-nav.component";
 import { HomeComponent } from "./home/home.component";
 import { CustomizingModule } from "./customizing/customizing.module";
-import { MaterialModule } from './MaterialModule';
+import { MaterialModule } from "./MaterialModule";
+import { GalleryComponent } from "./gallery/gallery.component";
+import {CrystalGalleryModule} from "ngx-crystal-gallery";
 
 @NgModule({
   imports: [
@@ -25,13 +27,15 @@ import { MaterialModule } from './MaterialModule';
     BrowserAnimationsModule,
     FlexLayoutModule,
     CustomizingModule,
+    CrystalGalleryModule,
     AppRoutingModule
   ],
   declarations: [
     AppComponent,
     MenuListItemComponent,
     HomeComponent,
-    TopNavComponent
+    TopNavComponent,
+    GalleryComponent
   ],
   bootstrap: [AppComponent],
   providers: [NavService]

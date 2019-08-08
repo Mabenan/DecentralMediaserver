@@ -9,6 +9,8 @@ import {
 import { VERSION } from "@angular/material";
 import { NavService } from "./services/nav.service";
 import { NavItem } from "./nav-item";
+import { TypeORMService } from "./services/TypeOrm.service";
+import { FileSystem } from "src/types/entity/FileSystem";
 
 @Component({
   selector: "app-root",
@@ -19,27 +21,7 @@ import { NavItem } from "./nav-item";
 export class AppComponent implements AfterViewInit {
   @ViewChild("appDrawer") appDrawer: ElementRef;
   version = VERSION;
-  navItems: NavItem[] = [
-    {
-      displayName: "Home",
-      iconName: "recent_actors",
-      route: "",
-      children: []
-    },
-    {
-      displayName: "Customizing",
-      iconName: "recent_actors",
-      route: "",
-      children: [
-        {
-          displayName: "FileSystem",
-          iconName: "recent_actors",
-          route: "customizing/"
-        },
-      ]
-    }
-  ];
-  constructor(public navService: NavService) {}
+  constructor(public navService: NavService, private typeoORM: TypeORMService) {}
 
   ngAfterViewInit() {
     this.navService.appDrawer = this.appDrawer;

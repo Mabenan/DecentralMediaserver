@@ -3,15 +3,27 @@ import { ElectronService } from "./electron.service";
 import * as fs from "fs";
 import * as ftp from "ftp";
 
-
 export class FTPConnection {
+  cwd(arg0: string): Promise<any> {
+    return new Promise<any>((res, rej) =>
+      this.client.cwd(arg0, (error) => {
+        if (error) {rej();} else {
+        res();
+        }
+      })
+    );
+  }
 
   constructor(private client: ftp) {}
   getListOfFiles(path: string): Promise<ftp.ListingElement[]> {
+    console.log(path);
     return new Promise<any[]>((res, rej) => {
-      this.client.list(path, (err: Error, listing: ftp.ListingElement[]) => {
-        res(listing);
-      });
+      this.client.listSafe(
+        path,
+        (err: Error, listing: ftp.ListingElement[]) => {
+          res(listing);
+        }
+      );
     });
   }
   logout() {
@@ -36,7 +48,7 @@ export class FTPService {
       client.on("ready", () => {
         res(new FTPConnection(client));
       });
-      client.on("error", (err) => {
+      client.on("error", err => {
         console.log(err.code);
         rej();
       });
@@ -44,4 +56,3 @@ export class FTPService {
     });
   }
 }
-
