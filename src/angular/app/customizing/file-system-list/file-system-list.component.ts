@@ -2,7 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { FileSystem } from "src/types/entity/FileSystem";
 import { FTPService } from "../../services/ftp.service";
 import { TypeORMService } from "../../services/TypeOrm.service";
-import * as Client from "ftp";
+import * as Client from "basic-ftp";
 import { NavService, ToolbarHandler } from "../../services/nav.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ImageSearchService } from "../../services/ImageSearch.service";
@@ -14,7 +14,7 @@ import { ImageSearchService } from "../../services/ImageSearch.service";
 })
 export class FileSystemListComponent implements OnInit, ToolbarHandler {
   title = "Decentral Mediaserver App";
-  folders: Client.ListingElement[] = [];
+  folders: Client.FileInfo[] = [];
   displayedColumns: string[] = ["name", "type", "actions"];
   fileSystems: FileSystem[] = [];
   constructor(
@@ -44,6 +44,9 @@ export class FileSystemListComponent implements OnInit, ToolbarHandler {
 
   imageSearch(element: FileSystem) {
     this.imageSearchService.searchFor(element);
+  }
+  thumbCreation(element: FileSystem) {
+    this.imageSearchService.thumbNail(element);
   }
   paths(element: FileSystem) {
     this.router.navigate(["../../paths", element.id], {relativeTo: this.route});

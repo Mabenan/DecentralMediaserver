@@ -40,6 +40,9 @@ class ElectronWindow {
       show: true,
       x: x,
       y: y,
+      webPreferences: {
+        nodeIntegration: true
+      }
     });
   }
 

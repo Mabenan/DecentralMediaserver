@@ -25,8 +25,8 @@ export class GalleryComponent implements OnInit {
         .find({relations: ["fileSystem"]})
         .then(files => {
           this.images = files.map(val => {
-            const path = encodeURI(val.webPath).replace("./", "http://" + val.fileSystem.webHost + "/");
-            return { preview: path, full: path, width: 1469, height: 675, description: val.name };
+            const path = "http://" + val.fileSystem.webHost + "/" + encodeURI(val.webPath);
+            return { preview: "data:image/jpeg;base64,"+val.thumb, full: path, width: 1469, height: 675, description: val.name };
           }) as any[];
         });
     });

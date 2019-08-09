@@ -19,6 +19,8 @@ export class File {
 
   @Column({nullable: true})
   public webPath: string;
+  @Column({type: "blob", nullable: true})
+  public thumb: string;
 
 
   @ManyToOne(type => Album, album => album.files)

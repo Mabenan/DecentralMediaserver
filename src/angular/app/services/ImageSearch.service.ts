@@ -4,20 +4,30 @@ import { FTPService, FTPConnection } from "./ftp.service";
 import { FileSystem } from "src/types/entity/FileSystem";
 import { ElectronService } from "./electron.service";
 import { File } from "src/types/entity/File";
-import * as ftp from "ftp";
+import * as ftp from "basic-ftp";
 import * as async from "async";
+import * as streamBuffers from "stream-buffers";
+// import * as sharp from "sharp";
+import { stdout } from "process";
 @Injectable({
   providedIn: "root"
 })
 export class ImageSearchService {
   allowedExtension = [".png", ".jpeg", ".jpg"];
   filesToCreate: File[] = [];
+  streamBuffers: typeof streamBuffers;
+  // sharp: typeof sharp;
   constructor(
     private typeORMService: TypeORMService,
     private ftpService: FTPService,
     private electron: ElectronService
-  ) {}
-  searchFor(element: FileSystem) {
+  ) {
+    this.streamBuffers = this.electron.remote.require("stream-buffers");
+  }
+
+  thumbNail(element: FileSystem) {
+    this.filesToCreate = [];
+
     this.ftpService
       .connect({
         host: element.ftpHost,
@@ -25,7 +35,66 @@ export class ImageSearchService {
         password: element.ftpPass
       })
       .then(client => {
-        client.getListOfFiles("").then((files: ftp.ListingElement[]) => {
+        this.typeORMService
+          .getConnection()
+          .then(conn => {
+            const rep = conn.getRepository<File>("File");
+            rep
+              .find({ where: { fileSystem: element } })
+              .then(files => {
+                async.eachSeries(
+                  files,
+                  (file, callback) => {
+                    client
+                      .getFile("/" + file.ftpPath)
+                      .then((stream: streamBuffers.WritableStreamBuffer) => {
+                        const bufs = stream.getContents();
+                        this.electron.remote
+                          .require("sharp")(bufs)
+                          .resize(200)
+                          .toBuffer()
+                          .then(resBuf => {
+                            file.thumb = resBuf.toString("base64");
+                            this.filesToCreate.push(file);
+                            callback();
+                          });
+                      })
+                      .catch(err => {
+                        console.log(err);
+                        callback();
+                      });
+                  },
+                  () => {
+                    rep.save(this.filesToCreate);
+                    client.logout();
+                  }
+                );
+              })
+              .catch(err => {
+                console.log(err);
+                client.logout();
+              });
+          })
+          .catch(() => {
+            client.logout();
+            console.log("err");
+          });
+      })
+      .catch(() => {
+        console.log("err");
+      });
+  }
+
+  searchFor(element: FileSystem) {
+    this.filesToCreate = [];
+    this.ftpService
+      .connect({
+        host: element.ftpHost,
+        user: element.ftpUser,
+        password: element.ftpPass
+      })
+      .then(client => {
+        client.getListOfFiles("").then((files: ftp.FileInfo[]) => {
           this.searchThroughFiles(files, element, client, "./")
             .then(() => {
               this.typeORMService.getConnection().then(conn => {
@@ -41,7 +110,7 @@ export class ImageSearchService {
                         },
                         relations: ["fileSystem", "album"]
                       })
-                      .then((existingFile) => {
+                      .then(existingFile => {
                         fileToCreate.id = existingFile.id;
                         fileToCreate.fileSystem = existingFile.fileSystem;
                         fileToCreate.album = existingFile.album;
@@ -69,7 +138,7 @@ export class ImageSearchService {
   }
 
   private searchThroughFiles(
-    files: ftp.ListingElement[],
+    files: ftp.FileInfo[],
     element: FileSystem,
     client: FTPConnection,
     path: string
@@ -80,49 +149,40 @@ export class ImageSearchService {
         async.eachOfSeries(
           files,
           (file, key, callback) => {
-            if (file.type !== undefined) {
-              if (file.type === "-") {
-                const extension = this.electron.path.extname(file.name);
-                if (this.allowedExtension.includes(extension.toLowerCase())) {
-                  const fileToCreate = new File();
-                  fileToCreate.name = file.name;
-                  fileToCreate.ftpPath = path + file.name;
-                  fileToCreate.webPath = fileToCreate.ftpPath;
-                  fileToCreate.fileSystem = element;
-                  fileToCreate.createdAt = file.date;
-                  this.filesToCreate.push(fileToCreate);
-                } else {
-                  console.log(file.name);
-                }
-                callback();
+            if (file.isFile) {
+              const extension = this.electron.path.extname(file.name);
+              if (this.allowedExtension.includes(extension.toLowerCase())) {
+                const fileToCreate = new File();
+                fileToCreate.name = file.name;
+                fileToCreate.ftpPath = this.electron.path.join(path, file.name);
+                fileToCreate.webPath = fileToCreate.ftpPath;
+                fileToCreate.fileSystem = element;
+                fileToCreate.createdAt = new Date(Date.parse(file.date));
+                this.filesToCreate.push(fileToCreate);
               } else {
-                client
-                  .cwd(this.electron.path.basename(path))
-                  .then(() => {
-                    client
-                      .getListOfFiles(file.name)
-                      .then((nfiles: ftp.ListingElement[]) => {
-                        this.searchThroughFiles(
-                          nfiles,
-                          element,
-                          client,
-                          path + file.name + "/"
-                        )
-                          .then(() => {
-                            client.cwd("..").then(() => {
-                              callback();
-                            });
-                          })
-                          .catch(() => {
-                            rej();
-                          });
-                      })
-                      .catch(() => {
-                        rej();
-                      });
-                  })
-                  .catch(() => rej());
+                console.log(file.name);
               }
+              callback();
+            } else if (file.isDirectory) {
+              client
+                .getListOfFiles(file.name)
+                .then((nfiles: ftp.FileInfo[]) => {
+                  this.searchThroughFiles(
+                    nfiles,
+                    element,
+                    client,
+                    this.electron.path.join(path, file.name)
+                  )
+                    .then(() => {
+                      callback();
+                    })
+                    .catch(err => {
+                      rej(err);
+                    });
+                })
+                .catch(err => {
+                  rej(err);
+                });
             } else {
               callback();
             }
