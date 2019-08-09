@@ -16,6 +16,7 @@ import { CustomizingModule } from "./customizing/customizing.module";
 import { MaterialModule } from "./MaterialModule";
 import { GalleryComponent } from "./gallery/gallery.component";
 import {CrystalGalleryModule} from "ngx-crystal-gallery";
+import { ProgressBarComponent } from "./progress-bar/progress-bar.component";
 
 @NgModule({
   imports: [
@@ -35,8 +36,10 @@ import {CrystalGalleryModule} from "ngx-crystal-gallery";
     MenuListItemComponent,
     HomeComponent,
     TopNavComponent,
-    GalleryComponent
+    GalleryComponent,
+    ProgressBarComponent
   ],
+  entryComponents: [ProgressBarComponent],
   bootstrap: [AppComponent],
   providers: [NavService]
 })

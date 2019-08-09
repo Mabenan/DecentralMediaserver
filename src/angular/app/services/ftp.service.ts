@@ -20,7 +20,7 @@ export class FTPConnection {
     });
   }
 
-  constructor(private client: ftp.Client, private electron: ElectronService) {}
+  constructor(public client: ftp.Client, private electron: ElectronService) {}
   getListOfFiles(path: string): Promise<ftp.FileInfo[]> {
     console.log(path);
     return new Promise<any[]>((res, rej) => {

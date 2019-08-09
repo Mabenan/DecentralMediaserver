@@ -9,6 +9,7 @@ import * as async from "async";
 import * as streamBuffers from "stream-buffers";
 // import * as sharp from "sharp";
 import { stdout } from "process";
+import { ProgressService } from "./progress.service";
 @Injectable({
   providedIn: "root"
 })
@@ -20,14 +21,16 @@ export class ImageSearchService {
   constructor(
     private typeORMService: TypeORMService,
     private ftpService: FTPService,
-    private electron: ElectronService
+    private electron: ElectronService,
+    private progressService: ProgressService
   ) {
     this.streamBuffers = this.electron.remote.require("stream-buffers");
   }
 
   thumbNail(element: FileSystem) {
     this.filesToCreate = [];
-
+    this.progressService.mode = "determinate";
+    this.progressService.activate();
     this.ftpService
       .connect({
         host: element.ftpHost,
@@ -42,6 +45,7 @@ export class ImageSearchService {
             rep
               .find({ where: { fileSystem: element } })
               .then(files => {
+                const onePercent = (1 / files.length) * 100;
                 async.eachSeries(
                   files,
                   (file, callback) => {
@@ -56,6 +60,7 @@ export class ImageSearchService {
                           .then(resBuf => {
                             file.thumb = resBuf.toString("base64");
                             this.filesToCreate.push(file);
+                            this.progressService.value += onePercent;
                             callback();
                           });
                       })
@@ -66,6 +71,7 @@ export class ImageSearchService {
                   },
                   () => {
                     rep.save(this.filesToCreate);
+                    this.progressService.close();
                     client.logout();
                   }
                 );
@@ -73,20 +79,25 @@ export class ImageSearchService {
               .catch(err => {
                 console.log(err);
                 client.logout();
+                this.progressService.close();
               });
           })
           .catch(() => {
             client.logout();
+            this.progressService.close();
             console.log("err");
           });
       })
       .catch(() => {
+        this.progressService.close();
         console.log("err");
       });
   }
 
   searchFor(element: FileSystem) {
     this.filesToCreate = [];
+    this.progressService.mode = "indeterminate";
+    this.progressService.activate();
     this.ftpService
       .connect({
         host: element.ftpHost,
@@ -126,14 +137,17 @@ export class ImageSearchService {
                 );
               });
               client.logout();
+              this.progressService.close();
             })
             .catch(() => {
               client.logout();
+              this.progressService.close();
             });
         });
       })
       .catch(() => {
         console.log("err");
+        this.progressService.close();
       });
   }
 
@@ -157,15 +171,25 @@ export class ImageSearchService {
                 fileToCreate.ftpPath = this.electron.path.join(path, file.name);
                 fileToCreate.webPath = fileToCreate.ftpPath;
                 fileToCreate.fileSystem = element;
-                fileToCreate.createdAt = new Date(Date.parse(file.date));
-                this.filesToCreate.push(fileToCreate);
+                client.client
+                  .lastMod(fileToCreate.ftpPath)
+                  .then(date => {
+                    fileToCreate.createdAt = date;
+                    this.filesToCreate.push(fileToCreate);
+                    callback();
+                  })
+                  .catch(() => {
+                    fileToCreate.createdAt = new Date(Date.parse(file.date));
+                    this.filesToCreate.push(fileToCreate);
+                    callback();
+                  });
               } else {
                 console.log(file.name);
+                callback();
               }
-              callback();
             } else if (file.isDirectory) {
               client
-                .getListOfFiles(file.name)
+                .getListOfFiles(this.electron.path.join(path, file.name))
                 .then((nfiles: ftp.FileInfo[]) => {
                   this.searchThroughFiles(
                     nfiles,
