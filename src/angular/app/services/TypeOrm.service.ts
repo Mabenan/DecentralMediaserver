@@ -30,11 +30,18 @@ export class TypeORMService {
 
     public getConnection(): Promise<typeORM.Connection> {
         return new Promise<typeORM.Connection>((res, rej) => {
+          if(this.connection.isConnected)
+          {
+            res(this.connection);
+          }else{
             this.connection.connect().then((connection) => {
                 this.migrate().then(() => res(this.connection));
-            }).catch(() => {
-                this.migrate().then(() => res(this.connection));
+            }).catch((err) => {
+              console.log(err);
+              rej(err);
+               // this.migrate().then(() => res(this.connection));
             });
+          }
 
         });
     }

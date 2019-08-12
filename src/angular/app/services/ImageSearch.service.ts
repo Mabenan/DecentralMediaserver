@@ -52,21 +52,35 @@ export class ImageSearchService {
                     client
                       .getFile("/" + file.ftpPath)
                       .then((stream: streamBuffers.WritableStreamBuffer) => {
-                        const bufs = stream.getContents();
+                        let bufs = stream.getContents();
                         this.electron.remote
                           .require("sharp")(bufs)
-                          .resize(200)
+                          .resize(50)
                           .toBuffer()
                           .then(resBuf => {
+                            this.progressService.message = file.name;
                             file.thumb = resBuf.toString("base64");
                             this.filesToCreate.push(file);
                             this.progressService.value += onePercent;
+                            resBuf = undefined;
+                            bufs = undefined;
+                            stream.destroy();
                             callback();
                           });
                       })
                       .catch(err => {
                         console.log(err);
+                      client.logout();
+    this.ftpService
+    .connect({
+      host: element.ftpHost,
+      user: element.ftpUser,
+      password: element.ftpPass
+    })
+    .then(lclient => {
+client = lclient;
                         callback();
+    });
                       });
                   },
                   () => {

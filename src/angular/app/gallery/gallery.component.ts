@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { TypeORMService } from "../services/TypeOrm.service";
 import { File } from "src/types/entity/File";
 import { IMasonryGalleryImage } from "ngx-masonry-gallery";
+import { PageEvent } from '@angular/material';
 
 @Component({
   selector: "app-gallery",
@@ -15,10 +16,17 @@ export class GalleryComponent implements OnInit {
     masonry: true,
     masonryMaxHeight: 50
   };
+  count: number;
 
   constructor(private orm: TypeORMService) {}
 
   ngOnInit() {
+    this.orm.getConnection().then(conn => {
+      conn
+        .getRepository<File>("File").count().then((count)=>{
+          this.count = count;
+        });
+    });
     this.orm.getConnection().then(conn => {
       conn
         .getRepository<File>("File")

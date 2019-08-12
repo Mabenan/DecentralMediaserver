@@ -8,7 +8,7 @@ import { PortalModule } from "@angular/cdk/portal";
 import { ScrollDispatchModule } from "@angular/cdk/scrolling";
 import { CdkStepperModule } from "@angular/cdk/stepper";
 import { CdkTableModule } from "@angular/cdk/table";
-import { MatAutocompleteModule, MatButtonModule, MatButtonToggleModule, MatCardModule, MatCheckboxModule, MatChipsModule, MatDatepickerModule, MatDialogModule, MatExpansionModule, MatGridListModule, MatIconModule, MatInputModule, MatListModule, MatMenuModule, MatNativeDateModule, MatProgressBarModule, MatProgressSpinnerModule, MatRadioModule, MatRippleModule, MatSelectModule, MatSidenavModule, MatSliderModule, MatSlideToggleModule, MatSnackBarModule, MatTabsModule, MatToolbarModule, MatTooltipModule, MatTableModule, MatStepperModule, MatFormFieldModule } from "@angular/material";
+import { MatAutocompleteModule, MatButtonModule, MatButtonToggleModule, MatCardModule, MatCheckboxModule, MatChipsModule, MatDatepickerModule, MatDialogModule, MatExpansionModule, MatGridListModule, MatIconModule, MatInputModule, MatListModule, MatMenuModule, MatNativeDateModule, MatProgressBarModule, MatProgressSpinnerModule, MatRadioModule, MatRippleModule, MatSelectModule, MatSidenavModule, MatSliderModule, MatSlideToggleModule, MatSnackBarModule, MatTabsModule, MatToolbarModule, MatTooltipModule, MatTableModule, MatStepperModule, MatFormFieldModule, MatPaginatorModule } from "@angular/material";
 /**
  * NgModule that includes all Material modules that are required.
  */
@@ -27,6 +27,7 @@ import { MatAutocompleteModule, MatButtonModule, MatButtonToggleModule, MatCardM
     // Material
     MatAutocompleteModule,
     MatStepperModule,
+    MatPaginatorModule,
     MatFormFieldModule,
     MatButtonModule,
     MatButtonToggleModule,

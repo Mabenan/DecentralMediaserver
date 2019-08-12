@@ -9,6 +9,7 @@ export class ProgressService {
   public value: number;
   app: any;
   popup: any;
+  public message: string;
 
   constructor() {
   }
