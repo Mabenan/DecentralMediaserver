@@ -1,10 +1,4 @@
 
-<div id="mygallery" >
-  <a id="lightgallery" *ngFor="let image of imageStore.images | async" href="http://{{image.fileSystem.webHost}}/{{image.webPath}}"
-
-   style="width:200px;height: 200px;">
-    <!-- <ng-container *ngIf="image.toLoad"> -->
-      <img alt="{{image.name}}" src="data:image/jpg;base64,{{image.thumb}}"/>
-    <!-- </ng-container> -->
-  </a>
+<div *ngFor="let day of days">
+<app-image-group  [day]="day"></app-image-group>
 </div>

@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
 import { Album } from "./Album";
 import { FileSystem } from "./FileSystem";
+import { Day } from './Day';
 
 @Entity()
 export class File {
@@ -27,6 +28,8 @@ export class File {
   public album: Album;
   @ManyToOne(type => FileSystem, fileSystem => fileSystem.files)
   public fileSystem: FileSystem;
+  @ManyToOne(type => Day, day => day.images)
+  public day: Day;
 
   public toLoad: boolean;
 }

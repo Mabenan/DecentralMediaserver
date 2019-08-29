@@ -1,0 +1,10 @@
+<div id="mygallery" >
+  <h2>{{day.day}}</h2>
+  <a id="lightgallery" *ngFor="let image of day.images" href="http://{{image.fileSystem.webHost}}/{{image.webPath}}"
+
+   style="width:200px;height: 200px;">
+    <!-- <ng-container *ngIf="image.toLoad"> -->
+      <img alt="{{image.name}}" src="data:image/jpg;base64,{{image.thumb}}"/>
+    <!-- </ng-container> -->
+  </a>
+</div>

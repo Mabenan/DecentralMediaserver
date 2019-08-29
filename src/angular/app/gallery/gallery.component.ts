@@ -4,6 +4,7 @@ import { File } from "src/types/entity/File";
 import * as $ from "jquery";
 import { IntersectionState } from "ng-lazy-load";
 import { ImageStore } from "../services/image.service";
+import { Day } from 'src/types/entity/Day';
 declare var lightGallery: any;
 @Component({
   selector: "app-gallery",
@@ -11,10 +12,23 @@ declare var lightGallery: any;
   styleUrls: ["./gallery.component.scss"]
 })
 export class GalleryComponent implements OnInit {
+  days: any;
 
-  constructor(public imageStore: ImageStore) {}
+  constructor(private orm: TypeORMService) {}
 
   ngOnInit() {
+
+    this.orm.getConnection().then(conn => {
+      conn
+        .getRepository<Day>("Day")
+        .find({ relations: ["images"]
+        //skip: start, take:count
+      })
+        .then(files => {
+          this.days = files;
+           //this.loadimages(start+count, count);
+        });
+    });
   }
 
 

@@ -6,6 +6,7 @@ import * as Client from "basic-ftp";
 import { NavService, ToolbarHandler } from "../../services/nav.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ImageSearchService } from "../../services/ImageSearch.service";
+import { ImageStore } from '../../services/image.service';
 
 @Component({
   selector: "app-file-system-list",
@@ -23,11 +24,14 @@ export class FileSystemListComponent implements OnInit, ToolbarHandler {
     private navService: NavService,
     private router: Router,
     private route: ActivatedRoute,
-    private imageSearchService: ImageSearchService
+    private imageSearchService: ImageSearchService,
+    private imageService: ImageStore
   ) {
         this.navService.addToolbarButtons(FileSystemListComponent.prototype.constructor.name, [{name: "Create New File System", handler: this, icon: ""}]);
   }
-
+migrate(element: FileSystem){
+  this.imageService.migrate();
+}
   ngOnInit() {
     this.typeorm.getConnection().then(connection =>
       connection

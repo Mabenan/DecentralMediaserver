@@ -49,42 +49,51 @@ export class ImageSearchService {
                 async.eachSeries(
                   files,
                   (file, callback) => {
-                    client
-                      .getFile("/" + file.ftpPath)
-                      .then((stream: streamBuffers.WritableStreamBuffer) => {
-                        let bufs = stream.getContents();
-                        this.electron.remote
-                          .require("sharp")(bufs)
-                          .resize(50)
-                          .toBuffer()
-                          .then(resBuf => {
-                            this.progressService.message = file.name;
-                            file.thumb = resBuf.toString("base64");
-                            this.filesToCreate.push(file);
-                            this.progressService.value += onePercent;
-                            resBuf = undefined;
-                            bufs = undefined;
-                            stream.destroy();
-                            callback();
-                          });
-                      })
-                      .catch(err => {
-                        console.log(err);
-                      client.logout();
-    this.ftpService
-    .connect({
-      host: element.ftpHost,
-      user: element.ftpUser,
-      password: element.ftpPass
-    })
-    .then(lclient => {
-client = lclient;
-                        callback();
-    });
-                      });
+                    if (file.thumb === null) {
+                      client
+                        .getFile("/" + file.ftpPath)
+                        .then((stream: streamBuffers.WritableStreamBuffer) => {
+                          let bufs = stream.getContents();
+                          this.electron.remote
+                            .require("sharp")(bufs)
+                            .resize(50)
+                            .toBuffer()
+                            .then(resBuf => {
+                              this.progressService.message = file.name;
+                              file.thumb = resBuf.toString("base64");
+                              this.progressService.value += onePercent;
+                              resBuf = undefined;
+                              bufs = undefined;
+                              stream.destroy();
+                              rep.save(file);
+                              callback();
+                            }).catch((err) => {
+                              bufs = undefined;
+                              stream.destroy();
+                              callback();
+
+                            });
+                        })
+                        .catch(err => {
+                          console.log(err);
+                          client.logout();
+                          this.ftpService
+                            .connect({
+                              host: element.ftpHost,
+                              user: element.ftpUser,
+                              password: element.ftpPass
+                            })
+                            .then(lclient => {
+                              client = lclient;
+                              callback();
+                            });
+                        });
+                    } else {
+                      this.progressService.value += onePercent;
+                      callback();
+                    }
                   },
                   () => {
-                    rep.save(this.filesToCreate);
                     this.progressService.close();
                     client.logout();
                   }

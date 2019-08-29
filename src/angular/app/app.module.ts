@@ -18,6 +18,7 @@ import { GalleryComponent } from "./gallery/gallery.component";
 import {CrystalGalleryModule} from "ngx-crystal-gallery";
 import { ProgressBarComponent } from "./progress-bar/progress-bar.component";
 import { DeferLoadModule } from "@trademe/ng-defer-load";
+import { ImageGroupComponent } from './image-group/image-group.component';
 
 @NgModule({
   imports: [
@@ -39,6 +40,7 @@ import { DeferLoadModule } from "@trademe/ng-defer-load";
     HomeComponent,
     TopNavComponent,
     GalleryComponent,
+    ImageGroupComponent,
     ProgressBarComponent
   ],
   entryComponents: [ProgressBarComponent],
