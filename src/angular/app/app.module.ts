@@ -17,6 +17,7 @@ import { MaterialModule } from "./MaterialModule";
 import { GalleryComponent } from "./gallery/gallery.component";
 import {CrystalGalleryModule} from "ngx-crystal-gallery";
 import { ProgressBarComponent } from "./progress-bar/progress-bar.component";
+import { DeferLoadModule } from "@trademe/ng-defer-load";
 
 @NgModule({
   imports: [
@@ -27,6 +28,7 @@ import { ProgressBarComponent } from "./progress-bar/progress-bar.component";
     ReactiveFormsModule,
     BrowserAnimationsModule,
     FlexLayoutModule,
+    DeferLoadModule,
     CustomizingModule,
     CrystalGalleryModule,
     AppRoutingModule

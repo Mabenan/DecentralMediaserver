@@ -27,4 +27,6 @@ export class File {
   public album: Album;
   @ManyToOne(type => FileSystem, fileSystem => fileSystem.files)
   public fileSystem: FileSystem;
+
+  public toLoad: boolean;
 }

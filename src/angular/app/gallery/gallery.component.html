@@ -1,4 +1,10 @@
-<div class="container">
 
-    <crystal-gallery class="gallery" [images]="images" [config]="myconfig"></crystal-gallery>
+<div id="mygallery" >
+  <a id="lightgallery" *ngFor="let image of imageStore.images | async" href="http://{{image.fileSystem.webHost}}/{{image.webPath}}"
+
+   style="width:200px;height: 200px;">
+    <!-- <ng-container *ngIf="image.toLoad"> -->
+      <img alt="{{image.name}}" src="data:image/jpg;base64,{{image.thumb}}"/>
+    <!-- </ng-container> -->
+  </a>
 </div>
