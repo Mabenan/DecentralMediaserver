@@ -24,10 +24,13 @@ export class ImageStore {
     }
 
     public migrate(){
+      this.progressService.mode = "determinate";
+      this.progressService.activate();
       this.orm.getConnection().then(conn => {
         conn
           .getRepository<File>("File")
-          .find().then((files) =>{
+          .find({relations: ["day"]}).then((files) =>{
+            const onePercent = (1 / files.length) * 100;
             const days: Day[] = [];
             files.forEach((file) =>{
               const today = file.createdAt;
@@ -37,11 +40,15 @@ if(!day){
   day = new Day();
   day.day = date;
   days.push(day);
+  conn.getRepository<Day>("Day").save(day);
 }
 file.day = day;
+conn.getRepository<File>("File").save(file);
+this.progressService.value += onePercent;
+
+this.progressService.message = day.day;
             });
-            conn.getRepository<File>("File").save(files);
-            conn.getRepository<Day>("Day").save(days);
+            this.progressService.close();
           });
         });
     }

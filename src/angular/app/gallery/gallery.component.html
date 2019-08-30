@@ -1,4 +1,17 @@
+<div class="container">
+  <mat-paginator [length]="length"
+[pageSize]="pageSize"
+[pageSizeOptions]="pageSizeOptions"
+(page)="onPage($event)">
+</mat-paginator>
+<app-image-group (imageClick)="onClick($event)" *ngFor="let day of currentDays | async"  [day]="day"></app-image-group>
+</div>1
 
-<div *ngFor="let day of days">
-<app-image-group  [day]="day"></app-image-group>
+<div *ngIf="currentBigImage !== undefined" class="modal">
+    <img class="center" src="http://{{currentBigImage.fileSystem.webHost}}/{{currentBigImage.webPath}}" />
+  <div class="modalContent">
+  <a class="prev" (click)="previouseImage(currentBigImage)">&#10094;</a>
+  <a class="next" (click)="nextImage(currentBigImage)">&#10095;</a>
+  <a class="close" (click)="close()">X</a>
+</div>
 </div>
