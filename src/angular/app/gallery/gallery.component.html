@@ -4,7 +4,7 @@
 [pageSizeOptions]="pageSizeOptions"
 (page)="onPage($event)">
 </mat-paginator>
-<app-image-group (imageClick)="onClick($event)" *ngFor="let day of currentDays | async"  [day]="day"></app-image-group>
+<app-image-group (imageClick)="onClick($event)" (imageDeleted)="onDelete($event)" *ngFor="let day of currentDays | async"  [day]="day"></app-image-group>
 </div>1
 
 <div *ngIf="currentBigImage !== undefined" class="modal">
@@ -13,5 +13,12 @@
   <a class="prev" (click)="previouseImage(currentBigImage)">&#10094;</a>
   <a class="next" (click)="nextImage(currentBigImage)">&#10095;</a>
   <a class="close" (click)="close()">X</a>
+
+  <a class="delete" (click)="delete()">D</a>
+  <a class="addToAlbum" (click)="addToAlbum()">A</a>
+
+  <select matNativeControl required>
+    <option *ngFor="let album of albums" value="album">{{album.name}}</option>
+  </select>
 </div>
 </div>

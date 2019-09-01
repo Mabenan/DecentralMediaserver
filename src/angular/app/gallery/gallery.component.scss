@@ -46,7 +46,9 @@
   user-select: none;
   -webkit-user-select: none;
 }
-.close {
+.close,
+.delete,
+.addToAlbum {
   cursor: pointer;
   position: absolute;
   top: 10%;
@@ -63,6 +65,14 @@
   -webkit-user-select: none;
 }
 
+.delete{
+  right: 40px;
+}
+
+.addToAlbum{
+  right: 80px;
+}
+
 /* Position the "next button" to the right */
 .next {
   right: 0;
@@ -71,6 +81,9 @@
 
 /* On hover, add a black background color with a little bit see-through */
 .prev:hover,
-.next:hover {
-  background-color: rgba(0, 0, 0, 0.8);
+.next:hover,
+.close:hover,
+.delete:hover,
+.addToAlbum:hover {
+  background-color: rgba(173, 15, 15, 0.74);
 }

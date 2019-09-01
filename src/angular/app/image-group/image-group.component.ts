@@ -15,6 +15,8 @@ export class ImageGroupComponent implements OnChanges {
   public day: Day;
   @Output()
   imageClick: EventEmitter<File> = new EventEmitter<File>();
+  @Output()
+  imageDeleted: EventEmitter<File> = new EventEmitter<File>();
 
   public images: File[];
 
@@ -22,11 +24,16 @@ export class ImageGroupComponent implements OnChanges {
 
   ngOnInit() {
   }
+  delete(image: File){
+    this.images = this.images.filter(img => img.id !== image.id);
+    this.imageDeleted.emit(image);
+
+  }
 
   ngOnChanges(changes: import("@angular/core").SimpleChanges): void {
     this.orm.getConnection().then(con => {
       const rep = con.getRepository<File>("File");
-      rep.find({ relations:["fileSystem"], where: { day: this.day } }).then(files => {
+      rep.find({ relations:["fileSystem"], where: { day: this.day, deleted: false } }).then(files => {
         this.images = files;
       });
     });

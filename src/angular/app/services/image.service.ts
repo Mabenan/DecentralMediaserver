@@ -34,7 +34,7 @@ export class ImageStore {
             const days: Day[] = [];
             files.forEach((file) =>{
               const today = file.createdAt;
-var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+var date = today.getFullYear()+'-'+("0" + (today.getMonth() + 1)).slice(-2)+'-'+("0" + today.getDate()).slice(-2);
 let day = days.find(val => val.day === date);
 if(!day){
   day = new Day();

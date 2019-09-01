@@ -12,6 +12,9 @@ export class Album {
   @PrimaryGeneratedColumn()
   public id: string;
 
+  @Column()
+  public name: string;
+
   @OneToMany(type => File, file => file.album)
   public files: File[];
 }

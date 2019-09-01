@@ -23,6 +23,9 @@ export class File {
   @Column({type: "blob", nullable: true})
   public thumb: string;
 
+  @Column({default: false})
+  public deleted: boolean;
+
 
   @ManyToOne(type => Album, album => album.files)
   public album: Album;
