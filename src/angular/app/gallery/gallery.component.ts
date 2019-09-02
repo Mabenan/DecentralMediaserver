@@ -8,7 +8,8 @@ import { Day } from "src/types/entity/Day";
 import { PageEvent } from "@angular/material";
 import { Observable, BehaviorSubject } from "rxjs";
 import { List } from "immutable";
-import { Album } from 'src/types/entity/Album';
+import { Album } from "src/types/entity/Album";
+import { Repository } from "typeorm";
 declare var lightGallery: any;
 @Component({
   selector: "app-gallery",
@@ -21,6 +22,7 @@ export class GalleryComponent implements OnInit {
   pageSizeOptions: number[] = [1, 3, 5, 10];
   days: Day[];
   albums: Album[];
+  selectedAlbum: string;
   private _currentDays: BehaviorSubject<List<Day>> = new BehaviorSubject(
     List([])
   );
@@ -32,68 +34,79 @@ export class GalleryComponent implements OnInit {
   images: File[];
   currentBigImage: File;
   currentIndex: number;
+  fileRep: Repository<File>;
 
   constructor(private orm: TypeORMService) {}
 
-  onClick(image: File){
+  onClick(image: File) {
     this.currentBigImage = image;
     this.currentIndex = this.images.findIndex(img => img.id === image.id);
   }
-  previouseImage(image: File){
+  previouseImage(image: File) {
     let imageIndex = -1;
-    if(this.currentIndex !== undefined){
+    if (this.currentIndex !== undefined) {
       imageIndex = this.currentIndex - 1;
-    }else{
+    } else {
     imageIndex = this.images.findIndex(img => img.id === image.id) - 1;
     }
-    if(imageIndex >= 0){
+    if (imageIndex >= 0) {
       this.currentIndex = imageIndex;
     this.currentBigImage = this.images[imageIndex];
+    this.selectedAlbum = this.currentBigImage.album ? this.currentBigImage.album.id : null;
     }
   }
-  nextImage(image: File){
+  nextImage(image: File) {
     let imageIndex = -1;
-    if(this.currentIndex !== undefined){
+    if (this.currentIndex !== undefined) {
       imageIndex = this.currentIndex + 1;
-    }else{
+    } else {
     imageIndex = this.images.findIndex(img => img.id === image.id) + 1;
     }
-    if(imageIndex < this.imageCount - 1){
+    if (imageIndex < this.imageCount - 1) {
       this.currentIndex = imageIndex;
     this.currentBigImage = this.images[imageIndex];
+    this.selectedAlbum = this.currentBigImage.album ? this.currentBigImage.album.id : null;
     }
 
   }
 
-  close(){
+  close() {
     this.currentBigImage = undefined;
     this.currentIndex = undefined;
+    this.selectedAlbum = undefined;
   }
 
-  async onDelete(image: File): Promise<any>{
-    return new Promise<any>((res,rej) => {this.images = this.images.filter(val => val.id !== image.id);
+  async onDelete(image: File): Promise<any> {
+    return new Promise<any>((res, rej) => {this.images = this.images.filter(val => val.id !== image.id);
     this.orm.getConnection().then(conn => {
-      image.deleted= true;
+      image.deleted = true;
       conn.getRepository<File>("File").save(image); res();
-    });});
+    }); });
   }
 
-  delete(){
+  delete() {
     const imageToSave = this.currentBigImage;
     this.images = this.images.filter(val => val.id !== this.currentBigImage.id);
     this.imageCount = this.images.length;
-    if(this.currentIndex >= this.imageCount){
+    if (this.currentIndex >= this.imageCount) {
       this.currentIndex = this.currentIndex - 1;
     }
     this.currentBigImage = this.images[this.currentIndex];
+    this.selectedAlbum = this.currentBigImage.album ? this.currentBigImage.album.id : null;
     this.orm.getConnection().then(conn => {
-      imageToSave.deleted= true;
+      imageToSave.deleted = true;
       conn.getRepository<File>("File").save(imageToSave);
     });
   }
 
-  addToAlbum(){
-
+  addToAlbum() {
+    const imageToSave = this.currentBigImage;
+    this.orm.getConnection().then(conn => {
+      conn.getRepository<Album>("Album").findOne(this.selectedAlbum, {relations: ["files"]}).then(alb => {
+        imageToSave.album = alb;
+        this.fileRep.save(imageToSave);
+    });
+    });
   }
 
   ngOnInit() {
@@ -109,11 +122,12 @@ export class GalleryComponent implements OnInit {
           this.length = files.length;
           //this.loadimages(start+count, count);
         });
-      conn.getRepository<File>("File").find({ where: { deleted: false }, order: { createdAt: "ASC"}, relations: ["fileSystem"]}).then((images) => {
+      this.fileRep = conn.getRepository<File>("File");
+      this.fileRep.find({ where: { deleted: false }, order: { createdAt: "ASC"}, relations: ["fileSystem", "album"]}).then((images) => {
         this.imageCount = images.length;
         this.images = images;
       });
-      conn.getRepository<Album>("Album").find().then((albums0)=>{
+      conn.getRepository<Album>("Album").find().then((albums0) => {
         this.albums = albums0;
       });
     });

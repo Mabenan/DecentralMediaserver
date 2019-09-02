@@ -16,9 +16,10 @@
 
   <a class="delete" (click)="delete()">D</a>
   <a class="addToAlbum" (click)="addToAlbum()">A</a>
-
-  <select matNativeControl required>
-    <option *ngFor="let album of albums" value="album">{{album.name}}</option>
-  </select>
+<div class="albumSelect">
+  <mat-select [(value)]="selectedAlbum">
+    <mat-option *ngFor="let album of albums" value="{{album.id}}">{{album.name}}</mat-option>
+  </mat-select>
+</div>
 </div>
 </div>

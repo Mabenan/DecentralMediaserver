@@ -10,6 +10,7 @@ import * as streamBuffers from "stream-buffers";
 // import * as sharp from "sharp";
 import { stdout } from "process";
 import { ProgressService } from "./progress.service";
+import { Day } from "src/types/entity/Day";
 @Injectable({
   providedIn: "root"
 })
@@ -67,11 +68,11 @@ export class ImageSearchService {
                               stream.destroy();
                               rep.save(file);
                               callback();
-                            }).catch((err) => {
+                            })
+                            .catch(err => {
                               bufs = undefined;
                               stream.destroy();
                               callback();
-
                             });
                         })
                         .catch(err => {
@@ -133,6 +134,7 @@ export class ImageSearchService {
             .then(() => {
               this.typeORMService.getConnection().then(conn => {
                 const rep = conn.getRepository<File>("File");
+                const dayrep = conn.getRepository<Day>("Day");
                 async.eachOfSeries(
                   this.filesToCreate,
                   (fileToCreate, key, callback) => {
@@ -142,19 +144,31 @@ export class ImageSearchService {
                           ftpPath: fileToCreate.ftpPath,
                           fileSystem: fileToCreate.fileSystem
                         },
-                        relations: ["fileSystem", "album"]
+                        relations: ["fileSystem", "album", "day"]
                       })
                       .then(existingFile => {
                         fileToCreate.id = existingFile.id;
                         fileToCreate.fileSystem = existingFile.fileSystem;
                         fileToCreate.album = existingFile.album;
+                        fileToCreate.day = existingFile.day;
                         rep.save(fileToCreate);
                         callback();
                       })
                       .catch(() => {
-                        const fileToSave = rep.create(fileToCreate);
-                        rep.save(fileToSave);
-                        callback();
+                        fileToCreate.day = new Day();
+                        const today = fileToCreate.createdAt;
+                        const date =
+                          today.getFullYear() +
+                          "-" +
+                          ("0" + (today.getMonth() + 1)).slice(-2) +
+                          "-" +
+                          ("0" + today.getDate()).slice(-2);
+                        fileToCreate.day.day = date;
+                        dayrep.save(fileToCreate.day).then(() => {
+                          const fileToSave = rep.create(fileToCreate);
+                          rep.save(fileToSave);
+                          callback();
+                        });
                       });
                   }
                 );
