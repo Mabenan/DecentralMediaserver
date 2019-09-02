@@ -5,6 +5,8 @@ import { FileSystemCreationComponent } from "../customizing/file-system-creation
 import { PathListComponent } from "../customizing/path-list/path-list.component";
 import { PathCreationComponent } from "../customizing/path-creation/path-creation.component";
 import { CustomizingComponent } from "./customizing/customizing.component";
+import { AlbumCreationComponent } from "./album-creation/album-creation.component";
+import { AlbumListComponent } from "./album-list/album-list.component";
 
 const routes: Routes = [
   {
@@ -21,6 +23,24 @@ const routes: Routes = [
           {
             path: "creation",
             component: FileSystemCreationComponent
+          },
+          {
+            path: "",
+            redirectTo: "list",
+            pathMatch: "full"
+          }
+        ]
+      },
+      {
+        path: "album",
+        children: [
+          {
+            path: "list",
+            component: AlbumListComponent
+          },
+          {
+            path: "creation",
+            component: AlbumCreationComponent
           },
           {
             path: "",

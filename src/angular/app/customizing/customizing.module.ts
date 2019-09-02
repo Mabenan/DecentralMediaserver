@@ -9,6 +9,8 @@ import { PathCreationComponent } from "./path-creation/path-creation.component";
 import { MaterialModule } from "../MaterialModule";
 import { CustomizingComponent } from "./customizing/customizing.component";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { AlbumCreationComponent } from "./album-creation/album-creation.component";
+import { AlbumListComponent } from "./album-list/album-list.component";
 
 @NgModule({
   imports: [
@@ -22,6 +24,8 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
     CustomizingComponent,
     FileSystemListComponent,
     FileSystemCreationComponent,
+    AlbumListComponent,
+    AlbumCreationComponent,
      PathListComponent,
       PathCreationComponent]
 })

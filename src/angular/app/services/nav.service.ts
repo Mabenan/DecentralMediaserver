@@ -42,6 +42,11 @@ export class NavService {
           iconName: "recent_actors",
           route: "customizing/"
         },
+        {
+          displayName: "Album",
+          iconName: "recent_actors",
+          route: "customizing/album"
+        },
       ]
     },
     {
