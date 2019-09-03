@@ -1,25 +1,51 @@
 <div class="container">
-  <mat-paginator [length]="length"
-[pageSize]="pageSize"
-[pageSizeOptions]="pageSizeOptions"
-(page)="onPage($event)">
-</mat-paginator>
-<app-image-group (imageClick)="onClick($event)" (imageDeleted)="onDelete($event)" *ngFor="let day of currentDays | async"  [day]="day"></app-image-group>
-</div>1
+  <mat-toolbar>
+
+      <span class="example-spacer"></span>
+        <mat-select [(value)]="massSelectedAlbum" style="width: 100px">
+          <mat-option *ngFor="let album of albums" [value]="album.id">{{
+            album.name
+          }}</mat-option>
+        </mat-select>
+      <button mat-button (click)="massAddToAlbum()">Add to Album</button>
+  <button mat-button (click)="massDelete()">Delete</button>
+  <mat-paginator
+    [length]="length"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="pageSizeOptions"
+    (page)="onPage($event)"
+  >
+  </mat-paginator>
+</mat-toolbar>
+  <app-image-group
+    (imageClick)="onClick($event)"
+    (imageSelected)="onSelect($event)"
+    *ngFor="let day of currentDays | async"
+    [day]="day"
+    [album]="album"
+  ></app-image-group>
+</div>
 
 <div *ngIf="currentBigImage !== undefined" class="modal">
-    <img class="center" src="http://{{currentBigImage.fileSystem.webHost}}/{{currentBigImage.webPath}}" />
+  <img
+    class="center"
+    src="http://{{ currentBigImage.fileSystem.webHost }}/{{
+      currentBigImage.webPath
+    }}"
+  />
   <div class="modalContent">
-  <a class="prev" (click)="previouseImage(currentBigImage)">&#10094;</a>
-  <a class="next" (click)="nextImage(currentBigImage)">&#10095;</a>
-  <a class="close" (click)="close()">X</a>
+    <a class="prev" (click)="previouseImage(currentBigImage)">&#10094;</a>
+    <a class="next" (click)="nextImage(currentBigImage)">&#10095;</a>
+    <a class="close" (click)="close()">X</a>
 
-  <a class="delete" (click)="delete()">D</a>
-  <a class="addToAlbum" (click)="addToAlbum()">A</a>
-<div class="albumSelect">
-  <mat-select [(value)]="selectedAlbum">
-    <mat-option *ngFor="let album of albums" value="{{album.id}}">{{album.name}}</mat-option>
-  </mat-select>
-</div>
-</div>
+    <a class="delete" (click)="delete()">D</a>
+    <a class="addToAlbum" (click)="addToAlbum()">A</a>
+    <div class="albumSelect">
+      <mat-select [(value)]="selectedAlbum">
+        <mat-option *ngFor="let album of albums" [value]="album.id">{{
+          album.name
+        }}</mat-option>
+      </mat-select>
+    </div>
+  </div>
 </div>

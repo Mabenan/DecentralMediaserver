@@ -17,6 +17,10 @@ const routes: Routes = [
     path: "gallery",
     component: GalleryComponent
   },
+  {
+    path: "gallery/:albumId",
+    component: GalleryComponent
+  },
 ];
 
 @NgModule({

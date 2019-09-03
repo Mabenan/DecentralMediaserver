@@ -3,9 +3,13 @@
   <div
     class="lightgallery"
     *ngFor="let image of images"
-    [ngStyle]="{'background': 'url(data:image/jpg;base64,' + image.thumb + ') no-repeat left center', 'background-size': 'cover'}"
+    [ngStyle]="{
+      background:
+        'url(data:image/jpg;base64,' + image.thumb + ') no-repeat left center',
+      'background-size': 'cover'
+    }"
   >
-  <div class="del" (click)="delete(image)">D</div>
-  <div class="del" (click)="onClick(image)">Z</div>
-</div>
+    <div class="zoom" (click)="onClick(image)"></div>
+      <mat-checkbox class="del" (change)="onSelected(image)"></mat-checkbox>
+  </div>
 </div>

@@ -4,6 +4,8 @@ import { BehaviorSubject } from "rxjs";
 import { element } from "@angular/core/src/render3";
 import { Tree } from "@angular/router/src/utils/tree";
 import { NavItem } from "../nav-item";
+import { TypeORMService } from "./TypeOrm.service";
+import { Album } from "src/types/entity/Album";
 
 export interface ToolbarHandler {
   onClick();
@@ -57,7 +59,23 @@ export class NavService {
     },
   ];
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private orm: TypeORMService) {
+    this.orm.getConnection().then((conn) => {
+      conn.getRepository<Album>("Album").find().then((albs) => {
+        const albumNav = {
+          displayName: "Alben",
+          iconName: "recent_actors",
+          route: "",
+          children: []
+        };
+        albs.forEach(alb => {
+          albumNav.children.push({displayName: alb.name,
+            iconName: "recent_actors",
+            route: "gallery/" + alb.id, });
+        });
+        this.navItems.push(albumNav);
+      });
+    });
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationEnd) {
         this.currentUrl.next(event.urlAfterRedirects);
