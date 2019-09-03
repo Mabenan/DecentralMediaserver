@@ -1,4 +1,4 @@
-import { Component, OnInit, ApplicationRef } from "@angular/core";
+import { Component, OnInit, ApplicationRef, HostListener } from "@angular/core";
 import { TypeORMService } from "../services/TypeOrm.service";
 import { File } from "src/types/entity/File";
 import * as $ from "jquery";
@@ -11,7 +11,15 @@ import { List } from "immutable";
 import { Album } from "src/types/entity/Album";
 import { Repository } from "typeorm";
 import { ActivatedRoute } from "@angular/router";
-declare var lightGallery: any;
+import { FTPService } from "../services/ftp.service";
+import * as streamBuffers from "stream-buffers";
+import async = require("async");
+import { ProgressService } from "../services/progress.service";
+import { ElectronService } from "../services/electron.service";
+export enum KEY_CODE {
+  RIGHT_ARROW = 39,
+  LEFT_ARROW = 37
+}
 @Component({
   selector: "app-gallery",
   templateUrl: "./gallery.component.html",
@@ -43,8 +51,55 @@ export class GalleryComponent implements OnInit {
   constructor(
     private orm: TypeORMService,
     private activeRoute: ActivatedRoute,
-    private app: ApplicationRef
+    private app: ApplicationRef,
+    private ftp: FTPService,
+    private progress: ProgressService,
+    private electron: ElectronService
   ) {}
+
+  downloadAlbum() {
+    this.progress.activate();
+    this.progress.mode = "determinate";
+    this.electron.remote.dialog
+      .showOpenDialog({ properties: ["openDirectory"] })
+      .then(dialogRet => {
+        const onePercent = (1 / this.images.length) * 100;
+        async.eachLimit(this.images,3, async (file, callback) => {
+          this.ftp
+            .connect({
+              host: file.fileSystem.ftpHost,
+              user: file.fileSystem.ftpUser,
+              password: file.fileSystem.ftpPass
+            })
+            .then(ftpcon => {
+              ftpcon
+                .getFile("/" + file.ftpPath)
+                .then((stream: streamBuffers.WritableStreamBuffer) => {
+                  let bufs = stream.getContents();
+                  this.electron.fs.writeFileSync(
+                    this.electron.path.join(dialogRet.filePaths[0], file.name),
+                    bufs
+                  );
+
+                  this.progress.message = file.name;
+                  this.progress.value += onePercent;
+                  bufs = undefined;
+                  ftpcon.logout();
+                  callback();
+                })
+                .catch(err => {
+                  ftpcon.logout();
+                  console.log(err);
+                  callback();
+                });
+            })
+            .catch(err => {
+              console.log(err);
+              callback();
+            });
+        });
+      });
+  }
 
   onClick(image: File) {
     this.currentBigImage = image;
@@ -53,6 +108,21 @@ export class GalleryComponent implements OnInit {
       ? this.currentBigImage.album.id
       : null;
   }
+  @HostListener("window:keyup", ["$event"])
+  keyEvent(event: KeyboardEvent) {
+    if (this.currentBigImage === undefined) {
+      return;
+    }
+
+    if (event.keyCode === KEY_CODE.RIGHT_ARROW) {
+      this.nextImage(this.currentBigImage);
+    }
+
+    if (event.keyCode === KEY_CODE.LEFT_ARROW) {
+      this.previouseImage(this.currentBigImage);
+    }
+  }
+
   previouseImage(image: File) {
     let imageIndex = -1;
     if (this.currentIndex !== undefined) {
@@ -102,7 +172,6 @@ export class GalleryComponent implements OnInit {
   }
 
   massDelete() {
-
     this.orm.getConnection().then(conn => {
       this.selectedImages.forEach(img => {
         img.deleted = true;
@@ -140,7 +209,9 @@ export class GalleryComponent implements OnInit {
       if (index === -1) {
         this.selectedImages.push(image);
       } else {
-        this.selectedImages = this.selectedImages.filter(val => val.id !== image.id);
+        this.selectedImages = this.selectedImages.filter(
+          val => val.id !== image.id
+        );
       }
       res();
     });
@@ -180,13 +251,14 @@ export class GalleryComponent implements OnInit {
     this.activeRoute.paramMap.subscribe(value => {
       this.selectedImages = [];
       this.orm.getConnection().then(conn => {
-          conn
-            .getRepository<Album>("Album")
-            .find()
-            .then(albums0 => {
-              this.albums = albums0;
-              this.massSelectedAlbum = this.albums.length > 0 ? this.albums[0].id : "";
-            });
+        conn
+          .getRepository<Album>("Album")
+          .find()
+          .then(albums0 => {
+            this.albums = albums0;
+            this.massSelectedAlbum =
+              this.albums.length > 0 ? this.albums[0].id : "";
+          });
         this.fileRep = conn.getRepository<File>("File");
         if (!value.has("albumId")) {
           this.fileRep
@@ -199,15 +271,15 @@ export class GalleryComponent implements OnInit {
               this.imageCount = images.length;
               this.images = images;
             });
-            conn
-              .getRepository<Day>("Day")
-              .find()
-              .then(files => {
-                this._currentDays.next(List(files.slice(0, this.pageSize)));
-                this.days = files;
-                this.length = files.length;
-                //this.loadimages(start+count, count);
-              });
+          conn
+            .getRepository<Day>("Day")
+            .find()
+            .then(files => {
+              this._currentDays.next(List(files.slice(0, this.pageSize)));
+              this.days = files;
+              this.length = files.length;
+              //this.loadimages(start+count, count);
+            });
         } else {
           conn
             .getRepository<Album>("Album")
@@ -224,8 +296,8 @@ export class GalleryComponent implements OnInit {
                   this.imageCount = images.length;
                   this.images = images;
                   let days: Day[] = [];
-                  this.images.forEach(img =>{
-                    if(days.findIndex(day => day.day === img.day.day) === -1){
+                  this.images.forEach(img => {
+                    if (days.findIndex(day => day.day === img.day.day) === -1) {
                       days.push(img.day);
                     }
                   });

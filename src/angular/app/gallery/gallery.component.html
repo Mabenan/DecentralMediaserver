@@ -1,6 +1,9 @@
 <div class="container">
   <mat-toolbar>
-
+      <h1 *ngIf="album !== undefined" >{{album.name}}</h1>
+      <button mat-button *ngIf="album !== undefined" (click)="downloadAlbum()">
+          Download Album
+        </button>
       <span class="example-spacer"></span>
         <mat-select [(value)]="massSelectedAlbum" style="width: 100px">
           <mat-option *ngFor="let album of albums" [value]="album.id">{{
@@ -9,6 +12,7 @@
         </mat-select>
       <button mat-button (click)="massAddToAlbum()">Add to Album</button>
   <button mat-button (click)="massDelete()">Delete</button>
+
   <mat-paginator
     [length]="length"
     [pageSize]="pageSize"
@@ -34,8 +38,8 @@
     }}"
   />
   <div class="modalContent">
-    <a class="prev" (click)="previouseImage(currentBigImage)">&#10094;</a>
-    <a class="next" (click)="nextImage(currentBigImage)">&#10095;</a>
+    <a  class="prev" (click)="previouseImage(currentBigImage)">&#10094;</a>
+    <a  class="next" (click)="nextImage(currentBigImage)" >&#10095;</a>
     <a class="close" (click)="close()">X</a>
 
     <a class="delete" (click)="delete()">D</a>
