@@ -4,13 +4,16 @@ import {
   Input,
   OnChanges,
   Output,
-  EventEmitter
+  EventEmitter,
+  ViewChildren,
+  QueryList
 } from "@angular/core";
 import { ImageStore } from "../services/image.service";
 import { Day } from "src/types/entity/Day";
 import { TypeORMService } from "../services/TypeOrm.service";
 import { File } from "src/types/entity/File";
 import { Album } from "src/types/entity/Album";
+import { MatCheckbox } from '@angular/material';
 
 @Component({
   selector: "app-image-group",
@@ -27,13 +30,26 @@ export class ImageGroupComponent implements OnChanges {
   @Output()
   imageSelected: EventEmitter<File> = new EventEmitter<File>();
 
+  @ViewChildren(MatCheckbox) checkboxes = new QueryList<MatCheckbox>();
+
   public images: File[];
+  allToogled: boolean;
 
   constructor(public orm: TypeORMService) {}
 
   ngOnInit() {}
   onSelected(image: File){
     this.imageSelected.emit(image);
+  }
+
+  checkAll(){
+    this.allToogled = !this.allToogled;
+    this.checkboxes.forEach(ck =>{
+      if(ck.checked !== this.allToogled){
+        //ck.toggle();
+        ck._onInputClick(new Event("click"));
+      }
+    });
   }
   ngOnChanges(changes: import("@angular/core").SimpleChanges): void {
     this.orm.getConnection().then(con => {

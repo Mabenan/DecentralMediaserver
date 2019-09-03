@@ -180,15 +180,6 @@ export class GalleryComponent implements OnInit {
     this.activeRoute.paramMap.subscribe(value => {
       this.selectedImages = [];
       this.orm.getConnection().then(conn => {
-        conn
-          .getRepository<Day>("Day")
-          .find()
-          .then(files => {
-            this._currentDays.next(List(files.slice(0, this.pageSize)));
-            this.days = files;
-            this.length = files.length;
-            //this.loadimages(start+count, count);
-          });
           conn
             .getRepository<Album>("Album")
             .find()
@@ -208,6 +199,15 @@ export class GalleryComponent implements OnInit {
               this.imageCount = images.length;
               this.images = images;
             });
+            conn
+              .getRepository<Day>("Day")
+              .find()
+              .then(files => {
+                this._currentDays.next(List(files.slice(0, this.pageSize)));
+                this.days = files;
+                this.length = files.length;
+                //this.loadimages(start+count, count);
+              });
         } else {
           conn
             .getRepository<Album>("Album")
@@ -218,11 +218,20 @@ export class GalleryComponent implements OnInit {
                 .find({
                   where: { deleted: false, album: this.album },
                   order: { createdAt: "ASC" },
-                  relations: ["fileSystem", "album"]
+                  relations: ["fileSystem", "album", "day"]
                 })
                 .then(images => {
                   this.imageCount = images.length;
                   this.images = images;
+                  let days: Day[] = [];
+                  this.images.forEach(img =>{
+                    if(days.findIndex(day => day.day === img.day.day) === -1){
+                      days.push(img.day);
+                    }
+                  });
+                  this._currentDays.next(List(days.slice(0, this.pageSize)));
+                  this.days = days;
+                  this.length = days.length;
                 });
             });
         }
