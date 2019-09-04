@@ -29,9 +29,9 @@ export class File {
 
   @ManyToOne(type => Album, album => album.files, {eager: true})
   public album: Album;
-  @ManyToOne(type => FileSystem, fileSystem => fileSystem.files)
+  @ManyToOne(type => FileSystem, fileSystem => fileSystem.files, {eager: true})
   public fileSystem: FileSystem;
-  @ManyToOne(type => Day, day => day.images)
+  @ManyToOne(type => Day, day => day.images, {eager: true})
   public day: Day;
 
   public toLoad: boolean;

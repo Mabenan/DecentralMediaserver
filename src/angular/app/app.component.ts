@@ -34,6 +34,8 @@ export class AppComponent implements AfterViewInit {
   showProgress() {
     const dialogRef = this.dialog.open(ProgressBarComponent, {
       width: "100%",
+      disableClose: true,
+      hasBackdrop: true
     });
 
     dialogRef.afterClosed().subscribe(result => {

@@ -111,6 +111,7 @@
     "lightgallery.js": "^1.1.3",
     "mysql": "^2.17.1",
     "ng-lazy-load": "^1.0.8",
+    "ng-pick-datetime": "^7.0.0",
     "ngx-crystal-gallery": "^1.1.5",
     "ngx-masonry-gallery": "^3.0.0",
     "popper.js": "^1.15.0",

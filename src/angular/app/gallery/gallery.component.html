@@ -24,6 +24,7 @@
   <app-image-group
     (imageClick)="onClick($event)"
     (imageSelected)="onSelect($event)"
+    (imageChanged)="onImageChanged($event)"
     *ngFor="let day of currentDays | async"
     [day]="day"
     [album]="album"

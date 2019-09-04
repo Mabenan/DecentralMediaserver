@@ -18,8 +18,9 @@ import { GalleryComponent } from "./gallery/gallery.component";
 import {CrystalGalleryModule} from "ngx-crystal-gallery";
 import { ProgressBarComponent } from "./progress-bar/progress-bar.component";
 import { DeferLoadModule } from "@trademe/ng-defer-load";
-import { ImageGroupComponent } from './image-group/image-group.component';
-
+import { ImageGroupComponent } from "./image-group/image-group.component";
+import { ImageEditComponent } from "./image-edit/image-edit.component";
+import { OwlDateTimeModule, OwlNativeDateTimeModule } from "ng-pick-datetime";
 @NgModule({
   imports: [
     BrowserModule,
@@ -32,6 +33,8 @@ import { ImageGroupComponent } from './image-group/image-group.component';
     DeferLoadModule,
     CustomizingModule,
     CrystalGalleryModule,
+    OwlDateTimeModule,
+    OwlNativeDateTimeModule,
     AppRoutingModule
   ],
   declarations: [
@@ -41,10 +44,12 @@ import { ImageGroupComponent } from './image-group/image-group.component';
     TopNavComponent,
     GalleryComponent,
     ImageGroupComponent,
-    ProgressBarComponent
+    ProgressBarComponent,
+    ImageEditComponent
   ],
-  entryComponents: [ProgressBarComponent],
+  entryComponents: [ProgressBarComponent, ImageEditComponent],
   bootstrap: [AppComponent],
-  providers: [NavService]
+  providers: [NavService],
+  exports: [ImageEditComponent]
 })
 export class AppModule {}

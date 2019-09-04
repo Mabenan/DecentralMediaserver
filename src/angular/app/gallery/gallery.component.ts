@@ -47,6 +47,7 @@ export class GalleryComponent implements OnInit {
   currentIndex: number;
   fileRep: Repository<File>;
   massSelectedAlbum: string;
+  parameter: any;
 
   constructor(
     private orm: TypeORMService,
@@ -64,7 +65,7 @@ export class GalleryComponent implements OnInit {
       .showOpenDialog({ properties: ["openDirectory"] })
       .then(dialogRet => {
         const onePercent = (1 / this.images.length) * 100;
-        async.eachLimit(this.images,3, async (file, callback) => {
+        async.eachLimit(this.images, 3, async (file, callback) => {
           this.ftp
             .connect({
               host: file.fileSystem.ftpHost,
@@ -97,6 +98,8 @@ export class GalleryComponent implements OnInit {
               console.log(err);
               callback();
             });
+        }, () => {
+          this.progress.close();
         });
       });
   }
@@ -121,6 +124,11 @@ export class GalleryComponent implements OnInit {
     if (event.keyCode === KEY_CODE.LEFT_ARROW) {
       this.previouseImage(this.currentBigImage);
     }
+  }
+
+  onImageChanged(image: File){
+    this.refresh(this.parameter);
+
   }
 
   previouseImage(image: File) {
@@ -249,67 +257,73 @@ export class GalleryComponent implements OnInit {
 
   ngOnInit() {
     this.activeRoute.paramMap.subscribe(value => {
-      this.selectedImages = [];
-      this.orm.getConnection().then(conn => {
-        conn
-          .getRepository<Album>("Album")
-          .find()
-          .then(albums0 => {
-            this.albums = albums0;
-            this.massSelectedAlbum =
-              this.albums.length > 0 ? this.albums[0].id : "";
-          });
-        this.fileRep = conn.getRepository<File>("File");
-        if (!value.has("albumId")) {
-          this.fileRep
-            .find({
-              where: { deleted: false },
-              order: { createdAt: "ASC" },
-              relations: ["fileSystem", "album"]
-            })
-            .then(images => {
-              this.imageCount = images.length;
-              this.images = images;
-            });
-          conn
-            .getRepository<Day>("Day")
-            .find()
-            .then(files => {
-              this._currentDays.next(List(files.slice(0, this.pageSize)));
-              this.days = files;
-              this.length = files.length;
-              //this.loadimages(start+count, count);
-            });
-        } else {
-          conn
-            .getRepository<Album>("Album")
-            .findOne(value.get("albumId"))
-            .then(album => {
-              this.album = album;
-              this.fileRep
-                .find({
-                  where: { deleted: false, album: this.album },
-                  order: { createdAt: "ASC" },
-                  relations: ["fileSystem", "album", "day"]
-                })
-                .then(images => {
-                  this.imageCount = images.length;
-                  this.images = images;
-                  let days: Day[] = [];
-                  this.images.forEach(img => {
-                    if (days.findIndex(day => day.day === img.day.day) === -1) {
-                      days.push(img.day);
-                    }
-                  });
-                  this._currentDays.next(List(days.slice(0, this.pageSize)));
-                  this.days = days;
-                  this.length = days.length;
-                });
-            });
-        }
-      });
+      this.parameter = value;
+      this.refresh(this.parameter);
     });
   }
+  private refresh(value) {
+    this.selectedImages = [];
+    this.orm.getConnection().then(conn => {
+      conn
+        .getRepository<Album>("Album")
+        .find()
+        .then(albums0 => {
+          this.albums = albums0;
+          this.massSelectedAlbum =
+            this.albums.length > 0 ? this.albums[0].id : "";
+        });
+      this.fileRep = conn.getRepository<File>("File");
+      if (!value.has("albumId")) {
+        this.fileRep
+          .find({
+            where: { deleted: false },
+            order: { createdAt: "ASC" },
+            relations: ["fileSystem", "album"]
+          })
+          .then(images => {
+            this.imageCount = images.length;
+            this.images = images;
+          });
+        conn
+          .getRepository<Day>("Day")
+          .find()
+          .then(files => {
+            this._currentDays.next(List(files.slice(0, this.pageSize)));
+            this.days = files;
+            this.length = files.length;
+            //this.loadimages(start+count, count);
+          });
+      }
+      else {
+        conn
+          .getRepository<Album>("Album")
+          .findOne(value.get("albumId"))
+          .then(album => {
+            this.album = album;
+            this.fileRep
+              .find({
+                where: { deleted: false, album: this.album },
+                order: { createdAt: "ASC" },
+                relations: ["fileSystem", "album", "day"]
+              })
+              .then(images => {
+                this.imageCount = images.length;
+                this.images = images;
+                const days: Day[] = [];
+                this.images.forEach(img => {
+                  if (days.findIndex(day => day.day === img.day.day) === -1) {
+                    days.push(img.day);
+                  }
+                });
+                this._currentDays.next(List(days.slice(0, this.pageSize)));
+                this.days = days;
+                this.length = days.length;
+              });
+          });
+      }
+    });
+  }
+
   onPage(event: PageEvent) {
     this.selectedImages = [];
     this._currentDays.next(
