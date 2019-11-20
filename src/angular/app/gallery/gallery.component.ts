@@ -31,6 +31,7 @@ export class GalleryComponent implements OnInit {
   pageSizeOptions: number[] = [1, 3, 5, 10];
   days: Day[];
   albums: Album[];
+  order: "ASC" | "DESC"  = "ASC";
   public album: Album;
   public selectedAlbum: string;
   selectedImages: File[] = [];
@@ -102,6 +103,11 @@ export class GalleryComponent implements OnInit {
           this.progress.close();
         });
       });
+  }
+
+  changeOrder(){
+    this.order = this.order === 'ASC'  ? 'DESC' : 'ASC';
+    this.refresh(this.parameter);
   }
 
   onClick(image: File) {
@@ -262,6 +268,9 @@ export class GalleryComponent implements OnInit {
     });
   }
   private refresh(value) {
+    this.progress.message = "loading images ..."
+    this.progress.mode = "indeterminate";
+    this.progress.activate();
     this.selectedImages = [];
     this.orm.getConnection().then(conn => {
       conn
@@ -277,14 +286,14 @@ export class GalleryComponent implements OnInit {
         this.fileRep
           .find({
             where: { deleted: false },
-            order: { createdAt: "ASC" },
+            order: { createdAt: this.order },
             relations: ["fileSystem", "album"]
           })
           .then(images => {
             this.imageCount = images.length;
             this.images = images;
           });
-        conn
+        /**conn
           .getRepository<Day>("Day")
           .find()
           .then(files => {
@@ -292,7 +301,14 @@ export class GalleryComponent implements OnInit {
             this.days = files;
             this.length = files.length;
             //this.loadimages(start+count, count);
-          });
+          });**/
+        conn.createQueryBuilder<Day>("Day", "Day").where("day in (SELECT dayDay from file where dayDay = day and deleted = false)").orderBy("day",this.order).getMany().then(files => {
+          this._currentDays.next(List(files.slice(0, this.pageSize)));
+          this.days = files;
+          this.length = files.length;
+          this.progress.close();
+          //this.loadimages(start+count, count);
+        });;
       }
       else {
         conn
@@ -303,7 +319,7 @@ export class GalleryComponent implements OnInit {
             this.fileRep
               .find({
                 where: { deleted: false, album: this.album },
-                order: { createdAt: "ASC" },
+                order: { createdAt: this.order },
                 relations: ["fileSystem", "album", "day"]
               })
               .then(images => {

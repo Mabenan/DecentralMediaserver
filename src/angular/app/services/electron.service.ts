@@ -17,6 +17,7 @@ export class ElectronService {
   childProcess: typeof childProcess;
   fs: typeof fs;
   path: typeof path;
+  app: any;
 
   get isElectron() {
     return window && (<any>window).process && (<any>window).process.type;
@@ -28,6 +29,7 @@ export class ElectronService {
       this.ipcRenderer = (<any>window).require("electron").ipcRenderer;
       this.webFrame = (<any>window).require("electron").webFrame;
       this.remote = (<any>window).require("electron").remote;
+      this.app = (<any>window).require("electron");
 
       this.childProcess = (<any>window).require("child_process");
       this.fs = (<any>window).require("fs");

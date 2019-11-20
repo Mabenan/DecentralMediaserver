@@ -13,6 +13,8 @@
       <button mat-button (click)="massAddToAlbum()">Add to Album</button>
   <button mat-button (click)="massDelete()">Delete</button>
 
+  <button mat-button *ngIf="order === 'ASC'" (click)="changeOrder()">Aufsteigend</button>
+  <button mat-button *ngIf="order === 'DESC'" (click)="changeOrder()">Absteigend</button>
   <mat-paginator
     [length]="length"
     [pageSize]="pageSize"

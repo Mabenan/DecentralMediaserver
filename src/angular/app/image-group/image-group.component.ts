@@ -6,7 +6,8 @@ import {
   Output,
   EventEmitter,
   ViewChildren,
-  QueryList
+  QueryList,
+  Host
 } from "@angular/core";
 import { Day } from "src/types/entity/Day";
 import { TypeORMService } from "../services/TypeOrm.service";
@@ -14,6 +15,7 @@ import { File } from "src/types/entity/File";
 import { Album } from "src/types/entity/Album";
 import { MatCheckbox, MatDialog } from "@angular/material";
 import { ImageEditComponent } from "../image-edit/image-edit.component";
+import { GalleryComponent } from '../gallery/gallery.component';
 
 @Component({
   selector: "app-image-group",
@@ -37,7 +39,7 @@ export class ImageGroupComponent implements OnChanges {
   public images: File[];
   allToogled: boolean;
 
-  constructor(public orm: TypeORMService, public dialog: MatDialog) {}
+  constructor(public orm: TypeORMService, public dialog: MatDialog, @Host() public parent: GalleryComponent) {}
 
   ngOnInit() {}
   onSelected(image: File) {
@@ -60,7 +62,8 @@ export class ImageGroupComponent implements OnChanges {
         rep
           .find({
             relations: ["fileSystem", "day"],
-            where: { day: this.day, deleted: false }
+            where: { day: this.day, deleted: false },
+            order: { createdAt: this.parent.order }
           })
           .then(files => {
             this.images = files;
@@ -69,7 +72,8 @@ export class ImageGroupComponent implements OnChanges {
         rep
           .find({
             relations: ["fileSystem", "day"],
-            where: { day: this.day, album: this.album, deleted: false }
+            where: { day: this.day, album: this.album, deleted: false },
+            order: { createdAt: this.parent.order }
           })
           .then(files => {
             this.images = files;

@@ -1,7 +1,13 @@
 {
   "name": "decentral-mediaserver",
+  "description": "decentral mediaserver",  
   "version": "1.2.2",
   "main": "dist/main.js",
+  "author":{ "name" : "Mabenan"
+, "email" : "mabenan@noreply.com"
+, "url" : ""
+},
+"descriptions":"test",
   "scripts": {
     "ng": "ng",
     "start": "run-script-os",
@@ -22,7 +28,9 @@
     "electron:watch": "concurrently --kill-others \"npm run electron:tsc \"  \"npm run electron:run\"",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "electron:exe": "electron . --serve --console --development --remote-debugging-port=9222",
-    "migrate": "tsc -p tsconfig.entity.json && tsc -p tsconfig.migration.json && typeorm migration:run && typeorm migration:generate"
+    "migrate": "tsc -p tsconfig.entity.json && tsc -p tsconfig.migration.json && typeorm migration:run && typeorm migration:generate",
+"package-linux": "electron-packager . --overwrite --asar=true --platform=linux --arch=x64 --icon=/home/daniel/Dokumente/DecentralMediaserver/icons8-onedrive-384.png --prune=true",
+"deb": "electron-installer-debian --src decentral-mediaserver-linux-x64 --dest decentral-mediaserver --arch amd64"
   },
   "browser": {
     "fs": false,
@@ -35,6 +43,7 @@
   "build": {
     "asar": true,
     "productName": "Decentral Mediaserver",
+    "description": "Decentraler Mediaserver",
     "appId": "com.electron.decentral-mediaserver",
     "copyright": "Mabenan",
     "files": [
@@ -64,7 +73,6 @@
       "category": "Music",
       "icon": "./src/assets/images/icon.ico",
       "target": [
-        "AppImage",
         "deb"
       ]
     }
@@ -100,7 +108,6 @@
     "buffer": "^5.2.1",
     "chart.js": "^2.5.0",
     "core-js": "^2.5.4",
-    "electron": "^6.0.1",
     "events": "^3.0.0",
     "express": "^4.17.1",
     "hammerjs": "^2.0.8",
@@ -142,6 +149,7 @@
     "@types/jasmine": "~2.8.6",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "~8.9.4",
+    "electron": "^6.0.1",
     "codelyzer": "~4.2.1",
     "concurrently": "^3.6.1",
     "electron-builder": "^21.2.0",

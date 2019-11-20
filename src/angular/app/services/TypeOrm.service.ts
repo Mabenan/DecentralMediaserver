@@ -11,7 +11,10 @@ export class TypeORMService {
     constructor(private electron: ElectronService) {
         const lfs: typeof fs = this.electron.remote.require("fs");
         const ltypeORM: typeof typeORM = this.electron.remote.require("typeorm");
-        this.options = JSON.parse(lfs.readFileSync("ormconfig.json", { encoding: "UTF-8" }));
+        console.log(this.electron.remote.require("electron").app.getPath("userData")+"/ormconfig.json");
+        const result: string = lfs.readFileSync(this.electron.path.join(this.electron.remote.require("electron").app.getPath("userData"),"ormconfig.json"), { encoding: "UTF-8" });
+        console.log(result);
+        this.options = JSON.parse(result);
         this.options.entities = this.options.entities.map((value) => {
             if (typeof value === "string") {
                 return this.electron.remote.require("path").join(__dirname, value.replace("dist", "../"));
@@ -35,7 +38,7 @@ export class TypeORMService {
             res(this.connection);
           }else{
             this.connection.connect().then((connection) => {
-                this.migrate().then(() => res(this.connection));
+                this.migrate().then(() => res(this.connection)).catch(() => res(this.connection));
             }).catch((err) => {
               console.log(err);
               rej(err);

@@ -1,0 +1,11 @@
+{
+  "dest": "release-builds/",
+  "icon": "/home/daniel/Dokumente/DecentralMediaserver/icons8-onedrive-384.png",
+  "categories": [
+    "Graphics"
+  ],
+  "description":"test",
+  "lintianOverrides": [
+    "changelog-file-missing-in-native-package"
+  ]
+}
